@@ -1,12 +1,24 @@
-import { useMemo } from 'react';
+import { useMemo, useRef, useEffect, useState } from 'react';
 import { useFinance } from '@/context/FinanceContext';
 import TransactionItem from '@/components/TransactionItem';
-import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, PiggyBank, ArrowRight } from 'lucide-react';
+import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
+import { TrendingUp, TrendingDown, PiggyBank, ArrowRight, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+function AnimatedNumber({ value, currency }: { value: number; currency: string }) {
+  const [display, setDisplay] = useState(0);
+  useEffect(() => {
+    const controls = animate(display, value, {
+      duration: 0.8,
+      onUpdate: (v) => setDisplay(Math.round(v)),
+    });
+    return controls.stop;
+  }, [value]);
+  return <>{currency}{display.toLocaleString()}</>;
+}
+
 export default function Dashboard() {
-  const { transactions, currency } = useFinance();
+  const { transactions, currency, userName } = useFinance();
   const navigate = useNavigate();
 
   const { totalIncome, totalExpense, balance } = useMemo(() => {
@@ -16,23 +28,30 @@ export default function Dashboard() {
   }, [transactions]);
 
   const recentTx = transactions.slice(0, 5);
+  const greeting = (() => {
+    const h = new Date().getHours();
+    if (h < 12) return 'Good morning';
+    if (h < 17) return 'Good afternoon';
+    return 'Good evening';
+  })();
 
   return (
     <div className="pb-24 px-4 pt-6 max-w-lg mx-auto">
       {/* Header */}
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <p className="text-muted-foreground text-sm font-medium">Good morning 👋</p>
-        <h1 className="text-2xl font-bold mt-1">My Finances</h1>
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
+        <div>
+          <p className="text-muted-foreground text-sm font-medium">{greeting} 👋</p>
+          <h1 className="text-2xl font-bold mt-1">{userName || 'My Finances'}</h1>
+        </div>
+        <button onClick={() => navigate('/settings')} className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center">
+          <Settings className="w-5 h-5 text-muted-foreground" />
+        </button>
       </motion.div>
 
       {/* Balance Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="mt-5 rounded-2xl gradient-hero p-5 text-primary-foreground elevated-shadow"
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mt-5 rounded-2xl gradient-hero p-5 text-primary-foreground elevated-shadow">
         <p className="text-sm opacity-80 font-medium">Total Balance</p>
-        <p className="text-3xl font-extrabold mt-1">{currency}{balance.toLocaleString()}</p>
+        <p className="text-3xl font-extrabold mt-1"><AnimatedNumber value={balance} currency={currency} /></p>
         <div className="flex gap-4 mt-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-primary-foreground/20 flex items-center justify-center">
@@ -40,7 +59,7 @@ export default function Dashboard() {
             </div>
             <div>
               <p className="text-[10px] opacity-70">Income</p>
-              <p className="text-sm font-bold">{currency}{totalIncome.toLocaleString()}</p>
+              <p className="text-sm font-bold"><AnimatedNumber value={totalIncome} currency={currency} /></p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -49,18 +68,14 @@ export default function Dashboard() {
             </div>
             <div>
               <p className="text-[10px] opacity-70">Expenses</p>
-              <p className="text-sm font-bold">{currency}{totalExpense.toLocaleString()}</p>
+              <p className="text-sm font-bold"><AnimatedNumber value={totalExpense} currency={currency} /></p>
             </div>
           </div>
         </div>
       </motion.div>
 
       {/* Quick Stats */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="grid grid-cols-2 gap-3 mt-5"
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="grid grid-cols-2 gap-3 mt-5">
         <div className="bg-card rounded-xl p-4 card-shadow cursor-pointer active:scale-[0.98] transition-transform" onClick={() => navigate('/budget')}>
           <div className="w-9 h-9 rounded-lg bg-accent/20 flex items-center justify-center mb-2">
             <PiggyBank className="w-5 h-5 text-accent" />
@@ -77,12 +92,27 @@ export default function Dashboard() {
         </div>
       </motion.div>
 
+      {/* Monthly Summary */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="mt-4 bg-primary/5 border border-primary/20 rounded-2xl p-4">
+        <h2 className="text-sm font-bold mb-2">📊 Monthly Summary</h2>
+        <div className="grid grid-cols-3 gap-3 text-center">
+          <div>
+            <p className="text-xs text-muted-foreground">Income</p>
+            <p className="text-sm font-bold text-income">{currency}{totalIncome.toLocaleString()}</p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Expense</p>
+            <p className="text-sm font-bold text-expense">{currency}{totalExpense.toLocaleString()}</p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Saved</p>
+            <p className="text-sm font-bold text-primary">{currency}{balance.toLocaleString()}</p>
+          </div>
+        </div>
+      </motion.div>
+
       {/* Recent Transactions */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="mt-6"
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mt-6">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-base font-bold">Recent Transactions</h2>
           <button onClick={() => navigate('/analytics')} className="flex items-center gap-1 text-xs text-primary font-semibold">
@@ -91,7 +121,11 @@ export default function Dashboard() {
         </div>
         <div className="bg-card rounded-xl p-3 card-shadow divide-y divide-border">
           {recentTx.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-8">No transactions yet</p>
+            <div className="text-center py-12">
+              <span className="text-4xl mb-3 block">📝</span>
+              <p className="text-sm text-muted-foreground">No transactions yet</p>
+              <p className="text-xs text-muted-foreground mt-1">Tap + to add your first one</p>
+            </div>
           ) : (
             recentTx.map(tx => <TransactionItem key={tx.id} transaction={tx} />)
           )}

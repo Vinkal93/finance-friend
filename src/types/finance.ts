@@ -33,6 +33,19 @@ export const INCOME_ICONS: Record<IncomeCategory, string> = {
   Other: '💵',
 };
 
+export const PAYMENT_MODES = ['Cash', 'UPI', 'Card', 'Net Banking', 'Bank Transfer', 'Wallet'] as const;
+export type PaymentMode = typeof PAYMENT_MODES[number];
+
+export const CURRENCY_OPTIONS = [
+  { symbol: '₹', name: 'INR', label: 'Indian Rupee' },
+  { symbol: '$', name: 'USD', label: 'US Dollar' },
+  { symbol: '€', name: 'EUR', label: 'Euro' },
+  { symbol: '£', name: 'GBP', label: 'British Pound' },
+  { symbol: '¥', name: 'JPY', label: 'Japanese Yen' },
+] as const;
+
+export const GOAL_ICONS = ['🛡️', '💻', '✈️', '🏠', '🚗', '📱', '🎓', '💍', '🏥', '🎯', '💪', '🎁'] as const;
+
 export interface Transaction {
   id: string;
   type: TransactionType;
@@ -41,6 +54,7 @@ export interface Transaction {
   note: string;
   date: string;
   paymentMode?: string;
+  recurring?: boolean;
 }
 
 export interface Budget {
