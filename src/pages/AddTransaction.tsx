@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useFinance } from '@/context/FinanceContext';
-import { ExpenseCategory, IncomeCategory, EXPENSE_ICONS, INCOME_ICONS, PAYMENT_MODES } from '@/types/finance';
+import { EXPENSE_ICONS, INCOME_ICONS, PAYMENT_MODES, EMOJI_PICKER } from '@/types/finance';
 import { motion } from 'framer-motion';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Check } from 'lucide-react';
 import { toast } from 'sonner';
 
-const EXPENSE_CATS: ExpenseCategory[] = ['Food', 'Travel', 'Rent', 'Bills', 'Shopping', 'Health', 'Entertainment', 'Education', 'Custom'];
-const INCOME_CATS: IncomeCategory[] = ['Salary', 'Freelance', 'Business', 'Investment', 'Other'];
+const EXPENSE_CATS = ['Food', 'Travel', 'Rent', 'Bills', 'Shopping', 'Health', 'Entertainment', 'Education', 'Custom'];
+const INCOME_CATS = ['Salary', 'Freelance', 'Business', 'Investment', 'Other'];
 
 export default function AddTransaction() {
-  const { addTransaction, updateTransaction, transactions, currency } = useFinance();
+  const { addTransaction, updateTransaction, transactions, currency, goals, customCategories, addCustomCategory } = useFinance();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const editId = searchParams.get('edit');
@@ -22,6 +22,10 @@ export default function AddTransaction() {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [paymentMode, setPaymentMode] = useState<string>('UPI');
   const [recurring, setRecurring] = useState(false);
+  const [goalId, setGoalId] = useState<string>('');
+  const [customName, setCustomName] = useState('');
+  const [customEmoji, setCustomEmoji] = useState('📌');
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   useEffect(() => {
     if (editId) {
@@ -34,16 +38,37 @@ export default function AddTransaction() {
         setDate(tx.date);
         setPaymentMode(tx.paymentMode || 'UPI');
         setRecurring(tx.recurring || false);
+        setGoalId(tx.goalId || '');
+        if (tx.customEmoji) setCustomEmoji(tx.customEmoji);
       }
     }
   }, [editId, transactions]);
 
-  const categories = type === 'expense' ? EXPENSE_CATS : INCOME_CATS;
-  const icons = type === 'expense' ? EXPENSE_ICONS : INCOME_ICONS;
+  const userCustomCats = customCategories.filter(c => c.forType === type);
+  const allCats = type === 'expense'
+    ? [...EXPENSE_CATS, ...userCustomCats.map(c => c.name)]
+    : [...INCOME_CATS, ...userCustomCats.map(c => c.name)];
+
+  const getIcon = (cat: string) => {
+    const custom = customCategories.find(c => c.name === cat);
+    if (custom) return custom.emoji;
+    return type === 'expense' ? (EXPENSE_ICONS[cat] || '📌') : (INCOME_ICONS[cat] || '💵');
+  };
 
   const handleSubmit = () => {
     if (!amount || !category) { toast.error('Please fill amount and category'); return; }
-    const data = { type, amount: parseFloat(amount), category: category as any, note, date, paymentMode, recurring };
+    const finalCategory = category === 'Custom' && customName ? customName : category;
+    const data = {
+      type, amount: parseFloat(amount), category: finalCategory, note, date, paymentMode, recurring,
+      customEmoji: category === 'Custom' ? customEmoji : undefined,
+      goalId: goalId || undefined,
+    };
+
+    if (category === 'Custom' && customName) {
+      const exists = customCategories.find(c => c.name === customName && c.forType === type);
+      if (!exists) addCustomCategory({ name: customName, emoji: customEmoji, forType: type });
+    }
+
     if (editId) {
       updateTransaction(editId, data);
       toast.success('Transaction updated!');
@@ -87,15 +112,39 @@ export default function AddTransaction() {
       <div className="mb-6">
         <label className="text-xs font-medium text-muted-foreground mb-2 block">Category</label>
         <div className="grid grid-cols-3 gap-2">
-          {categories.map(cat => (
+          {allCats.map(cat => (
             <button key={cat} onClick={() => setCategory(cat)}
               className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all active:scale-95 ${category === cat ? 'border-primary bg-primary/10 ring-2 ring-primary/20' : 'border-border bg-card'}`}>
-              <span className="text-xl">{(icons as any)[cat]}</span>
+              <span className="text-xl">{getIcon(cat)}</span>
               <span className="text-[11px] font-medium">{cat}</span>
             </button>
           ))}
         </div>
       </div>
+
+      {/* Custom Category Fields */}
+      {category === 'Custom' && (
+        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mb-6 space-y-3">
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Custom Category Name</label>
+            <input type="text" value={customName} onChange={e => setCustomName(e.target.value)} placeholder="e.g. Zomato, Gym"
+              className="w-full bg-card border border-border rounded-xl py-3 px-4 text-sm card-shadow focus:outline-none focus:ring-2 focus:ring-primary/30" />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Emoji</label>
+            <button onClick={() => setShowEmojiPicker(!showEmojiPicker)} className="w-14 h-14 rounded-xl border border-border bg-card flex items-center justify-center text-2xl">
+              {customEmoji}
+            </button>
+            {showEmojiPicker && (
+              <div className="flex flex-wrap gap-2 mt-2 p-3 bg-secondary rounded-xl">
+                {EMOJI_PICKER.map(e => (
+                  <button key={e} onClick={() => { setCustomEmoji(e); setShowEmojiPicker(false); }} className="w-10 h-10 rounded-lg bg-card flex items-center justify-center text-xl hover:ring-2 ring-primary/20">{e}</button>
+                ))}
+              </div>
+            )}
+          </div>
+        </motion.div>
+      )}
 
       {/* Payment Mode */}
       <div className="mb-6">
@@ -110,6 +159,23 @@ export default function AddTransaction() {
         </div>
       </div>
 
+      {/* Goal Contribution */}
+      {goals.length > 0 && (
+        <div className="mb-6">
+          <label className="text-xs font-medium text-muted-foreground mb-2 block">Contribute to Goal (optional)</label>
+          <div className="flex flex-wrap gap-2">
+            <button onClick={() => setGoalId('')} className={`px-3 py-2 rounded-lg text-xs font-semibold border ${!goalId ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground'}`}>
+              None
+            </button>
+            {goals.map(g => (
+              <button key={g.id} onClick={() => setGoalId(g.id)} className={`px-3 py-2 rounded-lg text-xs font-semibold border ${goalId === g.id ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground'}`}>
+                {g.icon} {g.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Note, Date, Recurring */}
       <div className="space-y-4 mb-8">
         <div>
@@ -122,7 +188,7 @@ export default function AddTransaction() {
           <input type="date" value={date} onChange={e => setDate(e.target.value)}
             className="w-full bg-card border border-border rounded-xl py-3 px-4 text-sm card-shadow focus:outline-none focus:ring-2 focus:ring-primary/30" />
         </div>
-        <label className="flex items-center gap-3 cursor-pointer">
+        <label className="flex items-center gap-3 cursor-pointer" onClick={() => setRecurring(!recurring)}>
           <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${recurring ? 'bg-primary border-primary' : 'border-border'}`}>
             {recurring && <Check className="w-3 h-3 text-primary-foreground" />}
           </div>
@@ -133,7 +199,6 @@ export default function AddTransaction() {
         </label>
       </div>
 
-      {/* Submit */}
       <button onClick={handleSubmit}
         className="w-full py-4 rounded-xl gradient-primary text-primary-foreground font-bold text-base fab-shadow active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
         <Check className="w-5 h-5" />

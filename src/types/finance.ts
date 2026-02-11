@@ -13,7 +13,7 @@ export type ExpenseCategory =
   | 'Education'
   | 'Custom';
 
-export const EXPENSE_ICONS: Record<ExpenseCategory, string> = {
+export const EXPENSE_ICONS: Record<string, string> = {
   Food: '🍔',
   Travel: '🚗',
   Rent: '🏠',
@@ -25,7 +25,7 @@ export const EXPENSE_ICONS: Record<ExpenseCategory, string> = {
   Custom: '📌',
 };
 
-export const INCOME_ICONS: Record<IncomeCategory, string> = {
+export const INCOME_ICONS: Record<string, string> = {
   Salary: '💰',
   Freelance: '💻',
   Business: '🏢',
@@ -46,20 +46,24 @@ export const CURRENCY_OPTIONS = [
 
 export const GOAL_ICONS = ['🛡️', '💻', '✈️', '🏠', '🚗', '📱', '🎓', '💍', '🏥', '🎯', '💪', '🎁'] as const;
 
+export const EMOJI_PICKER = ['🍕', '☕', '🎬', '🏋️', '🎵', '📦', '🎂', '🧾', '🔧', '💼', '🚌', '🏥', '📱', '🎁', '🐾', '🌐', '🔌', '💇', '🧹', '🎓'] as const;
+
 export interface Transaction {
   id: string;
   type: TransactionType;
   amount: number;
-  category: IncomeCategory | ExpenseCategory;
+  category: string;
   note: string;
   date: string;
   paymentMode?: string;
   recurring?: boolean;
+  customEmoji?: string;
+  goalId?: string;
 }
 
 export interface Budget {
   id: string;
-  category: ExpenseCategory;
+  category: string;
   limit: number;
   spent: number;
 }
@@ -71,4 +75,50 @@ export interface Goal {
   targetAmount: number;
   savedAmount: number;
   deadline: string;
+}
+
+export interface Bill {
+  id: string;
+  name: string;
+  amount: number;
+  dueDay: number;
+  icon: string;
+  isPaid: boolean;
+}
+
+export interface Subscription {
+  id: string;
+  name: string;
+  amount: number;
+  cycle: 'monthly' | 'yearly';
+  icon: string;
+  active: boolean;
+}
+
+export interface SplitExpense {
+  id: string;
+  description: string;
+  totalAmount: number;
+  date: string;
+  paidBy: string;
+  participants: { name: string; share: number; settled: boolean }[];
+}
+
+export interface NetWorthItem {
+  id: string;
+  name: string;
+  type: 'asset' | 'liability';
+  amount: number;
+  icon: string;
+}
+
+export interface SavingsChallenge {
+  id: string;
+  name: string;
+  type: string;
+  targetAmount: number;
+  savedAmount: number;
+  startDate: string;
+  endDate: string;
+  completedDays: string[];
 }

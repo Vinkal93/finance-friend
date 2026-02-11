@@ -1,30 +1,26 @@
 import { useFinance } from '@/context/FinanceContext';
 import { CURRENCY_OPTIONS } from '@/types/finance';
+import { ThemeMode } from '@/context/FinanceContext';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Moon, Sun, Download, User, DollarSign } from 'lucide-react';
+import { ArrowLeft, Moon, Sun, Download, User, DollarSign, Palette, RotateCcw, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
+import ConfirmDialog from '@/components/ConfirmDialog';
+
+const THEMES: { value: ThemeMode; label: string; icon: string; desc: string }[] = [
+  { value: 'light', label: 'Light', icon: '☀️', desc: 'Clean & bright' },
+  { value: 'dark', label: 'Dark', icon: '🌙', desc: 'Easy on eyes' },
+  { value: 'glass', label: 'Glass', icon: '✨', desc: 'Glassmorphism' },
+];
 
 export default function SettingsPage() {
-  const { currency, setCurrency, userName, setUserName, monthlyIncome, setMonthlyIncome, transactions } = useFinance();
+  const { currency, setCurrency, userName, setUserName, monthlyIncome, setMonthlyIncome, transactions, theme, setTheme, resetAll } = useFinance();
   const navigate = useNavigate();
-  const [darkMode, setDarkMode] = useState(() => document.documentElement.classList.contains('dark'));
   const [editName, setEditName] = useState(userName);
   const [editIncome, setEditIncome] = useState(String(monthlyIncome));
-
-  const toggleDark = () => {
-    const next = !darkMode;
-    setDarkMode(next);
-    document.documentElement.classList.toggle('dark', next);
-    localStorage.setItem('finance-dark-mode', String(next));
-  };
-
-  useEffect(() => {
-    const saved = localStorage.getItem('finance-dark-mode') === 'true';
-    setDarkMode(saved);
-    document.documentElement.classList.toggle('dark', saved);
-  }, []);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showExportConfirm, setShowExportConfirm] = useState(false);
 
   const exportCSV = () => {
     const headers = 'Date,Type,Category,Amount,Note,Payment Mode\n';
@@ -39,6 +35,7 @@ export default function SettingsPage() {
     a.click();
     URL.revokeObjectURL(url);
     toast.success('CSV exported successfully!');
+    setShowExportConfirm(false);
   };
 
   const saveName = () => { setUserName(editName); toast.success('Name updated!'); };
@@ -77,8 +74,31 @@ export default function SettingsPage() {
         </div>
       </motion.div>
 
-      {/* Currency */}
+      {/* Theme */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="bg-card rounded-2xl p-5 card-shadow mb-4">
+        <div className="flex items-center gap-3 mb-4">
+          <Palette className="w-5 h-5 text-primary" />
+          <h2 className="text-sm font-bold">Theme</h2>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {THEMES.map(t => (
+            <button
+              key={t.value}
+              onClick={() => setTheme(t.value)}
+              className={`p-3 rounded-xl border text-center transition-all ${
+                theme === t.value ? 'border-primary bg-primary/10 ring-2 ring-primary/20' : 'border-border'
+              }`}
+            >
+              <span className="text-2xl block mb-1">{t.icon}</span>
+              <p className="text-xs font-bold">{t.label}</p>
+              <p className="text-[9px] text-muted-foreground">{t.desc}</p>
+            </button>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Currency */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-card rounded-2xl p-5 card-shadow mb-4">
         <div className="flex items-center gap-3 mb-4">
           <DollarSign className="w-5 h-5 text-primary" />
           <h2 className="text-sm font-bold">Currency</h2>
@@ -99,25 +119,9 @@ export default function SettingsPage() {
         </div>
       </motion.div>
 
-      {/* Dark Mode */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-card rounded-2xl p-5 card-shadow mb-4">
-        <button onClick={toggleDark} className="w-full flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {darkMode ? <Moon className="w-5 h-5 text-primary" /> : <Sun className="w-5 h-5 text-primary" />}
-            <div className="text-left">
-              <p className="text-sm font-bold">Dark Mode</p>
-              <p className="text-xs text-muted-foreground">{darkMode ? 'On' : 'Off'}</p>
-            </div>
-          </div>
-          <div className={`w-12 h-7 rounded-full p-1 transition-colors ${darkMode ? 'bg-primary' : 'bg-secondary'}`}>
-            <div className={`w-5 h-5 rounded-full bg-white transition-transform ${darkMode ? 'translate-x-5' : ''}`} />
-          </div>
-        </button>
-      </motion.div>
-
       {/* Export */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bg-card rounded-2xl p-5 card-shadow mb-4">
-        <button onClick={exportCSV} className="w-full flex items-center gap-3">
+        <button onClick={() => setShowExportConfirm(true)} className="w-full flex items-center gap-3">
           <Download className="w-5 h-5 text-primary" />
           <div className="text-left">
             <p className="text-sm font-bold">Export Transactions</p>
@@ -125,6 +129,36 @@ export default function SettingsPage() {
           </div>
         </button>
       </motion.div>
+
+      {/* Reset */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-card rounded-2xl p-5 card-shadow mb-4 border border-expense/20">
+        <button onClick={() => setShowResetConfirm(true)} className="w-full flex items-center gap-3">
+          <RotateCcw className="w-5 h-5 text-expense" />
+          <div className="text-left">
+            <p className="text-sm font-bold text-expense">Reset All Data</p>
+            <p className="text-xs text-muted-foreground">Delete everything and start fresh</p>
+          </div>
+        </button>
+      </motion.div>
+
+      {/* Confirm Dialogs */}
+      <ConfirmDialog
+        open={showResetConfirm}
+        title="Reset All Data?"
+        message="This will permanently delete all your transactions, budgets, goals, and settings. This action cannot be undone. Are you sure?"
+        confirmText="Reset Everything"
+        destructive
+        onConfirm={() => { resetAll(); setShowResetConfirm(false); }}
+        onCancel={() => setShowResetConfirm(false)}
+      />
+      <ConfirmDialog
+        open={showExportConfirm}
+        title="Export Transactions?"
+        message="This will download all your transactions as a CSV file. Continue?"
+        confirmText="Export CSV"
+        onConfirm={exportCSV}
+        onCancel={() => setShowExportConfirm(false)}
+      />
     </div>
   );
 }

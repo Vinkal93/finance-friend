@@ -2,6 +2,15 @@ import React, { createContext, useContext, useState, useCallback, useEffect } fr
 import { Transaction, Budget, Goal } from '@/types/finance';
 import { toast } from 'sonner';
 
+export type ThemeMode = 'light' | 'dark' | 'glass';
+
+interface CustomCategory {
+  id: string;
+  name: string;
+  emoji: string;
+  forType: 'income' | 'expense';
+}
+
 interface FinanceState {
   transactions: Transaction[];
   budgets: Budget[];
@@ -23,6 +32,11 @@ interface FinanceState {
   setUserName: (n: string) => void;
   monthlyIncome: number;
   setMonthlyIncome: (n: number) => void;
+  theme: ThemeMode;
+  setTheme: (t: ThemeMode) => void;
+  customCategories: CustomCategory[];
+  addCustomCategory: (c: Omit<CustomCategory, 'id'>) => void;
+  resetAll: () => void;
 }
 
 const FinanceContext = createContext<FinanceState | null>(null);
@@ -53,29 +67,79 @@ const SAMPLE_GOALS: Goal[] = [
   { id: '3', name: 'Vacation Trip', icon: '✈️', targetAmount: 50000, savedAmount: 12000, deadline: '2026-08-15' },
 ];
 
+function applyThemeClass(t: ThemeMode) {
+  document.documentElement.classList.remove('dark', 'glass');
+  if (t !== 'light') document.documentElement.classList.add(t);
+  const meta = document.querySelector('#theme-color-meta');
+  if (meta) {
+    const colors: Record<ThemeMode, string> = { light: '#f5f7f5', dark: '#171f2b', glass: '#141b2d' };
+    meta.setAttribute('content', colors[t]);
+  }
+}
+
 export function FinanceProvider({ children }: { children: React.ReactNode }) {
-  const [transactions, setTransactions] = useState<Transaction[]>(SAMPLE_TRANSACTIONS);
-  const [budgets, setBudgets] = useState<Budget[]>(SAMPLE_BUDGETS);
-  const [goals, setGoals] = useState<Goal[]>(SAMPLE_GOALS);
+  const [transactions, setTransactions] = useState<Transaction[]>(() => {
+    const s = localStorage.getItem('finance-transactions');
+    return s ? JSON.parse(s) : SAMPLE_TRANSACTIONS;
+  });
+  const [budgets, setBudgets] = useState<Budget[]>(() => {
+    const s = localStorage.getItem('finance-budgets');
+    return s ? JSON.parse(s) : SAMPLE_BUDGETS;
+  });
+  const [goals, setGoals] = useState<Goal[]>(() => {
+    const s = localStorage.getItem('finance-goals');
+    return s ? JSON.parse(s) : SAMPLE_GOALS;
+  });
   const [currency, setCurrency] = useState(() => localStorage.getItem('finance-currency') || '₹');
   const [onboarded, setOnboarded] = useState(() => localStorage.getItem('finance-onboarded') === 'true');
   const [userName, setUserName] = useState(() => localStorage.getItem('finance-username') || '');
   const [monthlyIncome, setMonthlyIncome] = useState(() => Number(localStorage.getItem('finance-monthly-income')) || 0);
+  const [theme, setThemeState] = useState<ThemeMode>(() => (localStorage.getItem('finance-theme') as ThemeMode) || 'light');
+  const [customCategories, setCustomCategories] = useState<CustomCategory[]>(() => {
+    const s = localStorage.getItem('finance-custom-cats');
+    return s ? JSON.parse(s) : [];
+  });
 
+  // Persist all state
+  useEffect(() => { localStorage.setItem('finance-transactions', JSON.stringify(transactions)); }, [transactions]);
+  useEffect(() => { localStorage.setItem('finance-budgets', JSON.stringify(budgets)); }, [budgets]);
+  useEffect(() => { localStorage.setItem('finance-goals', JSON.stringify(goals)); }, [goals]);
   useEffect(() => { localStorage.setItem('finance-currency', currency); }, [currency]);
   useEffect(() => { localStorage.setItem('finance-onboarded', String(onboarded)); }, [onboarded]);
   useEffect(() => { localStorage.setItem('finance-username', userName); }, [userName]);
   useEffect(() => { localStorage.setItem('finance-monthly-income', String(monthlyIncome)); }, [monthlyIncome]);
+  useEffect(() => { localStorage.setItem('finance-theme', theme); }, [theme]);
+  useEffect(() => { localStorage.setItem('finance-custom-cats', JSON.stringify(customCategories)); }, [customCategories]);
+
+  // Apply theme on mount
+  useEffect(() => { applyThemeClass(theme); }, []);
+
+  const setTheme = useCallback((t: ThemeMode) => {
+    setThemeState(t);
+    applyThemeClass(t);
+  }, []);
 
   const addTransaction = useCallback((t: Omit<Transaction, 'id'>) => {
     const newTx: Transaction = { ...t, id: crypto.randomUUID() };
     setTransactions(prev => [newTx, ...prev]);
+
+    // Goal contribution
+    if (t.goalId) {
+      setGoals(prev => {
+        const updated = prev.map(g => g.id === t.goalId ? { ...g, savedAmount: g.savedAmount + t.amount } : g);
+        const goal = updated.find(g => g.id === t.goalId);
+        if (goal && goal.savedAmount >= goal.targetAmount) {
+          toast.success(`🎉 Congratulations! You've achieved your "${goal.name}" goal!`);
+        }
+        return updated;
+      });
+    }
+
     if (t.type === 'expense') {
       setBudgets(prev => {
         const updated = prev.map(b =>
           b.category === t.category ? { ...b, spent: b.spent + t.amount } : b
         );
-        // Check budget exceed
         const budget = updated.find(b => b.category === t.category);
         if (budget && budget.spent >= budget.limit) {
           toast.warning(`⚠️ Budget exceeded for ${t.category}! Spent ${currency}${budget.spent.toLocaleString()} of ${currency}${budget.limit.toLocaleString()}`);
@@ -126,6 +190,25 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     setGoals(prev => prev.filter(g => g.id !== id));
   }, []);
 
+  const addCustomCategory = useCallback((c: Omit<CustomCategory, 'id'>) => {
+    setCustomCategories(prev => [...prev, { ...c, id: crypto.randomUUID() }]);
+  }, []);
+
+  const resetAll = useCallback(() => {
+    const keys = Object.keys(localStorage).filter(k => k.startsWith('finance-'));
+    keys.forEach(k => localStorage.removeItem(k));
+    setTransactions([]);
+    setBudgets([]);
+    setGoals([]);
+    setCurrency('₹');
+    setUserName('');
+    setMonthlyIncome(0);
+    setOnboarded(false);
+    setCustomCategories([]);
+    setTheme('light');
+    toast.success('All data reset! Starting fresh.');
+  }, [setTheme]);
+
   return (
     <FinanceContext.Provider value={{
       transactions, budgets, goals, currency, setCurrency,
@@ -135,6 +218,9 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       onboarded, setOnboarded,
       userName, setUserName,
       monthlyIncome, setMonthlyIncome,
+      theme, setTheme,
+      customCategories, addCustomCategory,
+      resetAll,
     }}>
       {children}
     </FinanceContext.Provider>

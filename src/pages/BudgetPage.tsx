@@ -1,18 +1,20 @@
 import { useState } from 'react';
 import { useFinance } from '@/context/FinanceContext';
-import { EXPENSE_ICONS, ExpenseCategory } from '@/types/finance';
+import { EXPENSE_ICONS } from '@/types/finance';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, Plus, Pencil, Trash2, X } from 'lucide-react';
 import { toast } from 'sonner';
+import ConfirmDialog from '@/components/ConfirmDialog';
 
-const ALL_CATEGORIES: ExpenseCategory[] = ['Food', 'Travel', 'Rent', 'Bills', 'Shopping', 'Health', 'Entertainment', 'Education', 'Custom'];
+const ALL_CATEGORIES = ['Food', 'Travel', 'Rent', 'Bills', 'Shopping', 'Health', 'Entertainment', 'Education', 'Custom'];
 
 export default function BudgetPage() {
   const { budgets, currency, addBudget, updateBudget, deleteBudget } = useFinance();
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
-  const [category, setCategory] = useState<ExpenseCategory>('Food');
+  const [category, setCategory] = useState('Food');
   const [limit, setLimit] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   const totalLimit = budgets.reduce((s, b) => s + b.limit, 0);
   const totalSpent = budgets.reduce((s, b) => s + b.spent, 0);
@@ -39,7 +41,10 @@ export default function BudgetPage() {
     resetForm();
   };
 
-  const handleDelete = (id: string) => { deleteBudget(id); toast.success('Budget deleted'); };
+  const confirmDelete = (id: string) => setDeleteConfirm(id);
+  const handleDelete = () => {
+    if (deleteConfirm) { deleteBudget(deleteConfirm); toast.success('Budget deleted'); setDeleteConfirm(null); }
+  };
 
   return (
     <div className="pb-24 px-4 pt-6 max-w-lg mx-auto">
@@ -57,7 +62,7 @@ export default function BudgetPage() {
       <AnimatePresence>
         {showForm && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/50 flex items-end justify-center">
-            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} className="bg-card w-full max-w-lg rounded-t-2xl p-5">
+            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} className="bg-card w-full max-w-lg rounded-t-2xl p-5 pb-10 max-h-[80vh] overflow-y-auto">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-bold">{editId ? 'Edit Budget' : 'New Budget'}</h2>
                 <button onClick={resetForm} className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center"><X className="w-4 h-4" /></button>
@@ -68,7 +73,7 @@ export default function BudgetPage() {
                   <div className="grid grid-cols-3 gap-2">
                     {availableCategories.map(cat => (
                       <button key={cat} onClick={() => setCategory(cat)} className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all ${category === cat ? 'border-primary bg-primary/10 ring-2 ring-primary/20' : 'border-border'}`}>
-                        <span className="text-xl">{EXPENSE_ICONS[cat]}</span>
+                        <span className="text-xl">{EXPENSE_ICONS[cat] || '📌'}</span>
                         <span className="text-[11px] font-medium">{cat}</span>
                       </button>
                     ))}
@@ -105,7 +110,6 @@ export default function BudgetPage() {
         <p className="text-xs text-muted-foreground mt-2">{Math.round(overallPct)}% of budget used</p>
       </motion.div>
 
-      {/* Empty State */}
       {budgets.length === 0 && (
         <div className="text-center py-16">
           <span className="text-5xl mb-4 block">💰</span>
@@ -114,23 +118,21 @@ export default function BudgetPage() {
         </div>
       )}
 
-      {/* Category Budgets */}
       <div className="mt-6 space-y-3">
         {budgets.map((budget, i) => {
           const pct = budget.limit > 0 ? Math.min((budget.spent / budget.limit) * 100, 100) : 0;
           const isOver = budget.spent >= budget.limit;
-
           return (
             <motion.div key={budget.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 + i * 0.05 }} className={`bg-card rounded-xl p-4 card-shadow ${isOver ? 'ring-2 ring-expense/30' : ''}`}>
               <div className="flex items-center gap-3 mb-2">
-                <span className="text-xl">{EXPENSE_ICONS[budget.category as ExpenseCategory]}</span>
+                <span className="text-xl">{EXPENSE_ICONS[budget.category] || '📌'}</span>
                 <div className="flex-1">
                   <div className="flex justify-between items-center">
                     <p className="text-sm font-semibold">{budget.category}</p>
                     <div className="flex items-center gap-1">
                       {isOver && <AlertTriangle className="w-4 h-4 text-expense" />}
                       <button onClick={() => openEdit(budget)} className="w-7 h-7 rounded-lg bg-secondary flex items-center justify-center"><Pencil className="w-3 h-3" /></button>
-                      <button onClick={() => handleDelete(budget.id)} className="w-7 h-7 rounded-lg bg-secondary flex items-center justify-center text-expense"><Trash2 className="w-3 h-3" /></button>
+                      <button onClick={() => confirmDelete(budget.id)} className="w-7 h-7 rounded-lg bg-secondary flex items-center justify-center text-expense"><Trash2 className="w-3 h-3" /></button>
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground">{currency}{budget.spent.toLocaleString()} / {currency}{budget.limit.toLocaleString()}</p>
@@ -144,6 +146,16 @@ export default function BudgetPage() {
           );
         })}
       </div>
+
+      <ConfirmDialog
+        open={!!deleteConfirm}
+        title="Delete Budget?"
+        message="This budget will be permanently removed. This action cannot be undone."
+        confirmText="Delete"
+        destructive
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteConfirm(null)}
+      />
     </div>
   );
 }

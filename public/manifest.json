@@ -1,0 +1,13 @@
+{
+  "name": "FinanceApp - Smart Money Manager",
+  "short_name": "FinanceApp",
+  "description": "Track expenses, manage budgets, achieve financial goals",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f7f5",
+  "theme_color": "#1a7a4e",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/favicon.ico", "sizes": "64x64", "type": "image/x-icon" }
+  ]
+}

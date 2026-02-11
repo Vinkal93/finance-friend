@@ -4,6 +4,7 @@ import { GOAL_ICONS } from '@/types/finance';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Target, X, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import ConfirmDialog from '@/components/ConfirmDialog';
 
 export default function GoalsPage() {
   const { goals, currency, addGoal, updateGoal, deleteGoal } = useFinance();
@@ -14,6 +15,9 @@ export default function GoalsPage() {
   const [target, setTarget] = useState('');
   const [saved, setSaved] = useState('');
   const [deadline, setDeadline] = useState('');
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [savingsInput, setSavingsInput] = useState('');
+  const [savingsGoalId, setSavingsGoalId] = useState<string | null>(null);
 
   const resetForm = () => { setName(''); setIcon('🎯'); setTarget(''); setSaved(''); setDeadline(''); setEditId(null); setShowForm(false); };
 
@@ -33,14 +37,21 @@ export default function GoalsPage() {
     resetForm();
   };
 
-  const handleDelete = (id: string) => { deleteGoal(id); toast.success('Goal deleted'); };
+  const handleDelete = () => {
+    if (deleteConfirmId) { deleteGoal(deleteConfirmId); toast.success('Goal deleted'); setDeleteConfirmId(null); }
+  };
 
-  const addSavings = (id: string) => {
-    const amt = prompt(`Add savings amount (${currency}):`);
-    if (amt && Number(amt) > 0) {
-      const goal = goals.find(g => g.id === id);
-      if (goal) updateGoal(id, { savedAmount: goal.savedAmount + Number(amt) });
+  const addSavings = () => {
+    if (!savingsGoalId || !savingsInput) return;
+    const amt = Number(savingsInput);
+    if (amt <= 0) { toast.error('Enter a valid amount'); return; }
+    const goal = goals.find(g => g.id === savingsGoalId);
+    if (goal) {
+      updateGoal(savingsGoalId, { savedAmount: goal.savedAmount + amt });
+      toast.success(`Added ${currency}${amt.toLocaleString()} to ${goal.name}!`);
     }
+    setSavingsGoalId(null);
+    setSavingsInput('');
   };
 
   return (
@@ -59,7 +70,7 @@ export default function GoalsPage() {
       <AnimatePresence>
         {showForm && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/50 flex items-end justify-center">
-            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} className="bg-card w-full max-w-lg rounded-t-2xl p-5 max-h-[85vh] overflow-y-auto">
+            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} className="bg-card w-full max-w-lg rounded-t-2xl p-5 pb-10 max-h-[85vh] overflow-y-auto">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-bold">{editId ? 'Edit Goal' : 'New Goal'}</h2>
                 <button onClick={resetForm} className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center"><X className="w-4 h-4" /></button>
@@ -98,6 +109,25 @@ export default function GoalsPage() {
         )}
       </AnimatePresence>
 
+      {/* Savings Input Modal */}
+      <AnimatePresence>
+        {savingsGoalId && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-6">
+            <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} className="bg-card rounded-2xl p-6 w-full max-w-sm card-shadow">
+              <h3 className="text-lg font-bold mb-3">Add Savings</h3>
+              <div className="relative mb-4">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold text-muted-foreground">{currency}</span>
+                <input type="number" value={savingsInput} onChange={e => setSavingsInput(e.target.value)} placeholder="0" className="w-full bg-secondary rounded-xl py-3.5 pl-10 pr-4 text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-primary/30" autoFocus />
+              </div>
+              <div className="flex gap-3">
+                <button onClick={() => { setSavingsGoalId(null); setSavingsInput(''); }} className="flex-1 py-3 rounded-xl bg-secondary font-semibold">Cancel</button>
+                <button onClick={addSavings} className="flex-1 py-3 rounded-xl gradient-primary text-primary-foreground font-bold">Add</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Summary */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mt-5 bg-card rounded-2xl p-5 card-shadow">
         <div className="flex items-center gap-3">
@@ -112,7 +142,6 @@ export default function GoalsPage() {
         </div>
       </motion.div>
 
-      {/* Empty State */}
       {goals.length === 0 && (
         <div className="text-center py-16">
           <span className="text-5xl mb-4 block">🎯</span>
@@ -121,7 +150,6 @@ export default function GoalsPage() {
         </div>
       )}
 
-      {/* Goals List */}
       <div className="mt-6 space-y-3">
         {goals.map((goal, i) => {
           const pct = Math.min((goal.savedAmount / goal.targetAmount) * 100, 100);
@@ -141,7 +169,7 @@ export default function GoalsPage() {
                     <div className="flex items-center gap-1">
                       <span className="text-xs font-bold text-primary mr-1">{Math.round(pct)}%</span>
                       <button onClick={() => openEdit(goal)} className="w-7 h-7 rounded-lg bg-secondary flex items-center justify-center"><Pencil className="w-3 h-3" /></button>
-                      <button onClick={() => handleDelete(goal.id)} className="w-7 h-7 rounded-lg bg-secondary flex items-center justify-center text-expense"><Trash2 className="w-3 h-3" /></button>
+                      <button onClick={() => setDeleteConfirmId(goal.id)} className="w-7 h-7 rounded-lg bg-secondary flex items-center justify-center text-expense"><Trash2 className="w-3 h-3" /></button>
                     </div>
                   </div>
                   <div className="w-full h-2.5 bg-secondary rounded-full overflow-hidden mt-3">
@@ -151,7 +179,7 @@ export default function GoalsPage() {
                     <p className="text-xs text-muted-foreground">{currency}{goal.savedAmount.toLocaleString()} saved</p>
                     <p className="text-xs font-medium">{currency}{remaining.toLocaleString()} to go</p>
                   </div>
-                  <button onClick={() => addSavings(goal.id)} className="mt-2 w-full py-2 rounded-lg bg-primary/10 text-primary text-xs font-semibold active:scale-[0.98] transition-transform">
+                  <button onClick={() => setSavingsGoalId(goal.id)} className="mt-2 w-full py-2 rounded-lg bg-primary/10 text-primary text-xs font-semibold active:scale-[0.98] transition-transform">
                     + Add Savings
                   </button>
                 </div>
@@ -160,6 +188,8 @@ export default function GoalsPage() {
           );
         })}
       </div>
+
+      <ConfirmDialog open={!!deleteConfirmId} title="Delete Goal?" message="This goal and its progress will be permanently removed." confirmText="Delete" destructive onConfirm={handleDelete} onCancel={() => setDeleteConfirmId(null)} />
     </div>
   );
 }

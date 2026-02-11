@@ -1,9 +1,10 @@
-import { useMemo, useRef, useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { useFinance } from '@/context/FinanceContext';
 import TransactionItem from '@/components/TransactionItem';
-import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
-import { TrendingUp, TrendingDown, PiggyBank, ArrowRight, Settings } from 'lucide-react';
+import { motion, animate } from 'framer-motion';
+import { TrendingUp, TrendingDown, PiggyBank, ArrowRight, Settings, Receipt, Scissors, CreditCard, Calculator, TrendingUp as Forecast, Landmark, Trophy, FileText, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 function AnimatedNumber({ value, currency }: { value: number; currency: string }) {
   const [display, setDisplay] = useState(0);
@@ -16,6 +17,18 @@ function AnimatedNumber({ value, currency }: { value: number; currency: string }
   }, [value]);
   return <>{currency}{display.toLocaleString()}</>;
 }
+
+const TOOLS = [
+  { path: '/summary', icon: '📊', label: 'Summary' },
+  { path: '/health-score', icon: '💯', label: 'Score' },
+  { path: '/bills', icon: '📋', label: 'Bills' },
+  { path: '/split', icon: '✂️', label: 'Split' },
+  { path: '/subscriptions', icon: '📺', label: 'Subs' },
+  { path: '/emi', icon: '🏦', label: 'EMI' },
+  { path: '/cash-flow', icon: '📈', label: 'Forecast' },
+  { path: '/net-worth', icon: '💰', label: 'Net Worth' },
+  { path: '/challenges', icon: '🎯', label: 'Challenge' },
+];
 
 export default function Dashboard() {
   const { transactions, currency, userName } = useFinance();
@@ -92,8 +105,25 @@ export default function Dashboard() {
         </div>
       </motion.div>
 
+      {/* Financial Tools */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="mt-5">
+        <h2 className="text-base font-bold mb-3">Financial Tools</h2>
+        <div className="grid grid-cols-3 gap-2">
+          {TOOLS.map(tool => (
+            <button
+              key={tool.path}
+              onClick={() => navigate(tool.path)}
+              className="bg-card rounded-xl p-3 card-shadow flex flex-col items-center gap-1.5 active:scale-[0.97] transition-transform"
+            >
+              <span className="text-2xl">{tool.icon}</span>
+              <span className="text-[10px] font-semibold text-muted-foreground">{tool.label}</span>
+            </button>
+          ))}
+        </div>
+      </motion.div>
+
       {/* Monthly Summary */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="mt-4 bg-primary/5 border border-primary/20 rounded-2xl p-4">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mt-4 bg-primary/5 border border-primary/20 rounded-2xl p-4">
         <h2 className="text-sm font-bold mb-2">📊 Monthly Summary</h2>
         <div className="grid grid-cols-3 gap-3 text-center">
           <div>
@@ -112,7 +142,7 @@ export default function Dashboard() {
       </motion.div>
 
       {/* Recent Transactions */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mt-6">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="mt-6">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-base font-bold">Recent Transactions</h2>
           <button onClick={() => navigate('/analytics')} className="flex items-center gap-1 text-xs text-primary font-semibold">
