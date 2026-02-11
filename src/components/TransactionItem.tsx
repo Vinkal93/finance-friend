@@ -1,10 +1,11 @@
-import { Transaction, EXPENSE_ICONS, INCOME_ICONS, ExpenseCategory, IncomeCategory } from '@/types/finance';
+import { Transaction, EXPENSE_ICONS, INCOME_ICONS } from '@/types/finance';
 import { useFinance } from '@/context/FinanceContext';
 import { useNavigate } from 'react-router-dom';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import { motion, AnimatePresence, PanInfo } from 'framer-motion';
+import { motion, PanInfo } from 'framer-motion';
 import { toast } from 'sonner';
+import ConfirmDialog from '@/components/ConfirmDialog';
 
 interface Props {
   transaction: Transaction;
@@ -15,10 +16,11 @@ export default function TransactionItem({ transaction, showActions = false }: Pr
   const { currency, deleteTransaction } = useFinance();
   const navigate = useNavigate();
   const isIncome = transaction.type === 'income';
-  const icon = isIncome
-    ? INCOME_ICONS[transaction.category as IncomeCategory]
-    : EXPENSE_ICONS[transaction.category as ExpenseCategory];
+  const icon = transaction.customEmoji
+    || (isIncome ? INCOME_ICONS[transaction.category] : EXPENSE_ICONS[transaction.category])
+    || '📌';
   const [swiped, setSwiped] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleDragEnd = (_: any, info: PanInfo) => {
     if (info.offset.x < -100) setSwiped(true);
@@ -28,13 +30,17 @@ export default function TransactionItem({ transaction, showActions = false }: Pr
   const handleDelete = () => {
     deleteTransaction(transaction.id);
     toast.success('Transaction deleted');
+    setShowDeleteConfirm(false);
+  };
+
+  const handleClick = () => {
+    navigate(`/transaction/${transaction.id}`);
   };
 
   return (
     <div className="relative overflow-hidden">
-      {/* Delete background */}
       <div className="absolute right-0 top-0 bottom-0 flex items-center pr-4 bg-expense/10 rounded-xl">
-        <button onClick={handleDelete} className="p-2 rounded-lg bg-expense text-primary-foreground">
+        <button onClick={() => setShowDeleteConfirm(true)} className="p-2 rounded-lg bg-expense text-primary-foreground">
           <Trash2 className="w-4 h-4" />
         </button>
       </div>
@@ -45,7 +51,8 @@ export default function TransactionItem({ transaction, showActions = false }: Pr
         dragElastic={0.1}
         onDragEnd={handleDragEnd}
         animate={{ x: swiped ? -80 : 0 }}
-        className="flex items-center gap-3 py-3 bg-card relative z-10"
+        className="flex items-center gap-3 py-3 bg-card relative z-10 cursor-pointer"
+        onClick={handleClick}
       >
         <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-lg">
           {icon}
@@ -68,12 +75,22 @@ export default function TransactionItem({ transaction, showActions = false }: Pr
         </div>
         {showActions && (
           <div className="flex gap-1 ml-1">
-            <button onClick={() => navigate(`/add?edit=${transaction.id}`)} className="w-7 h-7 rounded-lg bg-secondary flex items-center justify-center">
+            <button onClick={(e) => { e.stopPropagation(); navigate(`/add?edit=${transaction.id}`); }} className="w-7 h-7 rounded-lg bg-secondary flex items-center justify-center">
               <Pencil className="w-3 h-3" />
             </button>
           </div>
         )}
       </motion.div>
+
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        title="Delete Transaction?"
+        message={`Delete "${transaction.note || transaction.category}" (${currency}${transaction.amount.toLocaleString()})? This cannot be undone.`}
+        confirmText="Delete"
+        destructive
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
     </div>
   );
 }
