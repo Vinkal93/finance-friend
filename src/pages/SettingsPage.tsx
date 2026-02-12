@@ -1,8 +1,8 @@
 import { useFinance } from '@/context/FinanceContext';
 import { CURRENCY_OPTIONS } from '@/types/finance';
-import { ThemeMode } from '@/context/FinanceContext';
+import { ThemeMode, AccentColor, FontSize } from '@/context/FinanceContext';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Moon, Sun, Download, User, DollarSign, Palette, RotateCcw, Sparkles } from 'lucide-react';
+import { ArrowLeft, Download, User, DollarSign, Palette, RotateCcw, Lock, Type, Paintbrush } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -14,13 +14,31 @@ const THEMES: { value: ThemeMode; label: string; icon: string; desc: string }[] 
   { value: 'glass', label: 'Glass', icon: '✨', desc: 'Glassmorphism' },
 ];
 
+const ACCENTS: { value: AccentColor; label: string; color: string }[] = [
+  { value: 'green', label: 'Green', color: 'bg-[hsl(152,58%,38%)]' },
+  { value: 'blue', label: 'Blue', color: 'bg-[hsl(217,91%,60%)]' },
+  { value: 'purple', label: 'Purple', color: 'bg-[hsl(270,70%,60%)]' },
+  { value: 'orange', label: 'Orange', color: 'bg-[hsl(25,95%,55%)]' },
+  { value: 'red', label: 'Red', color: 'bg-[hsl(0,72%,55%)]' },
+  { value: 'teal', label: 'Teal', color: 'bg-[hsl(180,60%,40%)]' },
+];
+
+const FONT_SIZES: { value: FontSize; label: string; desc: string }[] = [
+  { value: 'small', label: 'A', desc: 'Small' },
+  { value: 'medium', label: 'A', desc: 'Medium' },
+  { value: 'large', label: 'A', desc: 'Large' },
+];
+
 export default function SettingsPage() {
-  const { currency, setCurrency, userName, setUserName, monthlyIncome, setMonthlyIncome, transactions, theme, setTheme, resetAll } = useFinance();
+  const { currency, setCurrency, userName, setUserName, monthlyIncome, setMonthlyIncome, transactions, theme, setTheme, accentColor, setAccentColor, fontSize, setFontSize, resetAll } = useFinance();
   const navigate = useNavigate();
   const [editName, setEditName] = useState(userName);
   const [editIncome, setEditIncome] = useState(String(monthlyIncome));
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showExportConfirm, setShowExportConfirm] = useState(false);
+  const [showPinSetup, setShowPinSetup] = useState(false);
+  const [pinInput, setPinInput] = useState('');
+  const hasPin = !!localStorage.getItem('finance-pin');
 
   const exportCSV = () => {
     const headers = 'Date,Type,Category,Amount,Note,Payment Mode\n';
@@ -40,6 +58,22 @@ export default function SettingsPage() {
 
   const saveName = () => { setUserName(editName); toast.success('Name updated!'); };
   const saveIncome = () => { setMonthlyIncome(Number(editIncome) || 0); toast.success('Monthly income updated!'); };
+
+  const handlePinSave = () => {
+    if (pinInput.length === 4) {
+      localStorage.setItem('finance-pin', pinInput);
+      toast.success('PIN set! App will be locked on next open.');
+      setShowPinSetup(false);
+      setPinInput('');
+    } else {
+      toast.error('PIN must be 4 digits');
+    }
+  };
+
+  const removePin = () => {
+    localStorage.removeItem('finance-pin');
+    toast.success('PIN removed');
+  };
 
   return (
     <div className="pb-24 px-4 pt-6 max-w-lg mx-auto">
@@ -82,13 +116,8 @@ export default function SettingsPage() {
         </div>
         <div className="grid grid-cols-3 gap-2">
           {THEMES.map(t => (
-            <button
-              key={t.value}
-              onClick={() => setTheme(t.value)}
-              className={`p-3 rounded-xl border text-center transition-all ${
-                theme === t.value ? 'border-primary bg-primary/10 ring-2 ring-primary/20' : 'border-border'
-              }`}
-            >
+            <button key={t.value} onClick={() => setTheme(t.value)}
+              className={`p-3 rounded-xl border text-center transition-all ${theme === t.value ? 'border-primary bg-primary/10 ring-2 ring-primary/20' : 'border-border'}`}>
               <span className="text-2xl block mb-1">{t.icon}</span>
               <p className="text-xs font-bold">{t.label}</p>
               <p className="text-[9px] text-muted-foreground">{t.desc}</p>
@@ -97,21 +126,50 @@ export default function SettingsPage() {
         </div>
       </motion.div>
 
-      {/* Currency */}
+      {/* Accent Color */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="bg-card rounded-2xl p-5 card-shadow mb-4">
+        <div className="flex items-center gap-3 mb-4">
+          <Paintbrush className="w-5 h-5 text-primary" />
+          <h2 className="text-sm font-bold">Accent Color</h2>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          {ACCENTS.map(a => (
+            <button key={a.value} onClick={() => setAccentColor(a.value)}
+              className={`flex flex-col items-center gap-1.5 transition-all`}>
+              <div className={`w-10 h-10 rounded-full ${a.color} transition-all ${accentColor === a.value ? 'ring-4 ring-primary/30 scale-110' : ''}`} />
+              <span className="text-[10px] font-semibold">{a.label}</span>
+            </button>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Font Size */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-card rounded-2xl p-5 card-shadow mb-4">
+        <div className="flex items-center gap-3 mb-4">
+          <Type className="w-5 h-5 text-primary" />
+          <h2 className="text-sm font-bold">Font Size</h2>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {FONT_SIZES.map((f, i) => (
+            <button key={f.value} onClick={() => setFontSize(f.value)}
+              className={`p-3 rounded-xl border text-center transition-all ${fontSize === f.value ? 'border-primary bg-primary/10 ring-2 ring-primary/20' : 'border-border'}`}>
+              <span className={`block mb-1 font-bold ${i === 0 ? 'text-sm' : i === 1 ? 'text-lg' : 'text-2xl'}`}>{f.label}</span>
+              <p className="text-[10px] text-muted-foreground">{f.desc}</p>
+            </button>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Currency */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="bg-card rounded-2xl p-5 card-shadow mb-4">
         <div className="flex items-center gap-3 mb-4">
           <DollarSign className="w-5 h-5 text-primary" />
           <h2 className="text-sm font-bold">Currency</h2>
         </div>
         <div className="grid grid-cols-3 gap-2">
           {CURRENCY_OPTIONS.map(c => (
-            <button
-              key={c.symbol}
-              onClick={() => { setCurrency(c.symbol); toast.success(`Currency set to ${c.name}`); }}
-              className={`p-3 rounded-xl border text-center transition-all ${
-                currency === c.symbol ? 'border-primary bg-primary/10 ring-2 ring-primary/20' : 'border-border'
-              }`}
-            >
+            <button key={c.symbol} onClick={() => { setCurrency(c.symbol); toast.success(`Currency set to ${c.name}`); }}
+              className={`p-3 rounded-xl border text-center transition-all ${currency === c.symbol ? 'border-primary bg-primary/10 ring-2 ring-primary/20' : 'border-border'}`}>
               <span className="text-lg font-bold">{c.symbol}</span>
               <p className="text-[10px] text-muted-foreground">{c.name}</p>
             </button>
@@ -119,8 +177,34 @@ export default function SettingsPage() {
         </div>
       </motion.div>
 
-      {/* Export */}
+      {/* App Lock */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bg-card rounded-2xl p-5 card-shadow mb-4">
+        <div className="flex items-center gap-3 mb-4">
+          <Lock className="w-5 h-5 text-primary" />
+          <h2 className="text-sm font-bold">App Lock</h2>
+        </div>
+        {hasPin ? (
+          <div className="flex gap-2">
+            <button onClick={removePin} className="flex-1 py-2.5 rounded-xl bg-expense/10 text-expense text-xs font-semibold">Remove PIN</button>
+            <button onClick={() => setShowPinSetup(true)} className="flex-1 py-2.5 rounded-xl bg-primary/10 text-primary text-xs font-semibold">Change PIN</button>
+          </div>
+        ) : (
+          <button onClick={() => setShowPinSetup(true)} className="w-full py-2.5 rounded-xl bg-primary/10 text-primary text-sm font-semibold">Set PIN Lock</button>
+        )}
+        {showPinSetup && (
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-3">
+            <input type="password" maxLength={4} value={pinInput} onChange={e => setPinInput(e.target.value.replace(/\D/g, ''))}
+              placeholder="Enter 4-digit PIN" className="w-full bg-secondary rounded-lg py-2.5 px-3 text-sm text-center tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-primary/30" />
+            <div className="flex gap-2 mt-2">
+              <button onClick={() => { setShowPinSetup(false); setPinInput(''); }} className="flex-1 py-2 rounded-lg bg-secondary text-xs font-semibold">Cancel</button>
+              <button onClick={handlePinSave} className="flex-1 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold">Save PIN</button>
+            </div>
+          </motion.div>
+        )}
+      </motion.div>
+
+      {/* Export */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }} className="bg-card rounded-2xl p-5 card-shadow mb-4">
         <button onClick={() => setShowExportConfirm(true)} className="w-full flex items-center gap-3">
           <Download className="w-5 h-5 text-primary" />
           <div className="text-left">
@@ -141,24 +225,8 @@ export default function SettingsPage() {
         </button>
       </motion.div>
 
-      {/* Confirm Dialogs */}
-      <ConfirmDialog
-        open={showResetConfirm}
-        title="Reset All Data?"
-        message="This will permanently delete all your transactions, budgets, goals, and settings. This action cannot be undone. Are you sure?"
-        confirmText="Reset Everything"
-        destructive
-        onConfirm={() => { resetAll(); setShowResetConfirm(false); }}
-        onCancel={() => setShowResetConfirm(false)}
-      />
-      <ConfirmDialog
-        open={showExportConfirm}
-        title="Export Transactions?"
-        message="This will download all your transactions as a CSV file. Continue?"
-        confirmText="Export CSV"
-        onConfirm={exportCSV}
-        onCancel={() => setShowExportConfirm(false)}
-      />
+      <ConfirmDialog open={showResetConfirm} title="Reset All Data?" message="This will permanently delete all your transactions, budgets, goals, and settings. This action cannot be undone. Are you sure?" confirmText="Reset Everything" destructive onConfirm={() => { resetAll(); setShowResetConfirm(false); }} onCancel={() => setShowResetConfirm(false)} />
+      <ConfirmDialog open={showExportConfirm} title="Export Transactions?" message="This will download all your transactions as a CSV file. Continue?" confirmText="Export CSV" onConfirm={exportCSV} onCancel={() => setShowExportConfirm(false)} />
     </div>
   );
 }

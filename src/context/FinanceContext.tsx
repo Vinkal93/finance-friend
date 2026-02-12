@@ -3,6 +3,8 @@ import { Transaction, Budget, Goal } from '@/types/finance';
 import { toast } from 'sonner';
 
 export type ThemeMode = 'light' | 'dark' | 'glass';
+export type AccentColor = 'green' | 'blue' | 'purple' | 'orange' | 'red' | 'teal';
+export type FontSize = 'small' | 'medium' | 'large';
 
 interface CustomCategory {
   id: string;
@@ -34,6 +36,10 @@ interface FinanceState {
   setMonthlyIncome: (n: number) => void;
   theme: ThemeMode;
   setTheme: (t: ThemeMode) => void;
+  accentColor: AccentColor;
+  setAccentColor: (c: AccentColor) => void;
+  fontSize: FontSize;
+  setFontSize: (f: FontSize) => void;
   customCategories: CustomCategory[];
   addCustomCategory: (c: Omit<CustomCategory, 'id'>) => void;
   resetAll: () => void;
@@ -67,6 +73,15 @@ const SAMPLE_GOALS: Goal[] = [
   { id: '3', name: 'Vacation Trip', icon: '✈️', targetAmount: 50000, savedAmount: 12000, deadline: '2026-08-15' },
 ];
 
+const ACCENT_CSS: Record<AccentColor, { primary: string; gradient: string; ring: string }> = {
+  green: { primary: '152 58% 38%', gradient: 'linear-gradient(135deg, hsl(152,58%,38%), hsl(160,60%,30%))', ring: '152 58% 38%' },
+  blue: { primary: '217 91% 60%', gradient: 'linear-gradient(135deg, hsl(217,91%,60%), hsl(230,80%,50%))', ring: '217 91% 60%' },
+  purple: { primary: '270 70% 60%', gradient: 'linear-gradient(135deg, hsl(270,70%,60%), hsl(290,60%,50%))', ring: '270 70% 60%' },
+  orange: { primary: '25 95% 55%', gradient: 'linear-gradient(135deg, hsl(25,95%,55%), hsl(15,90%,48%))', ring: '25 95% 55%' },
+  red: { primary: '0 72% 55%', gradient: 'linear-gradient(135deg, hsl(0,72%,55%), hsl(350,80%,48%))', ring: '0 72% 55%' },
+  teal: { primary: '180 60% 40%', gradient: 'linear-gradient(135deg, hsl(180,60%,40%), hsl(195,70%,35%))', ring: '180 60% 40%' },
+};
+
 function applyThemeClass(t: ThemeMode) {
   document.documentElement.classList.remove('dark', 'glass');
   if (t !== 'light') document.documentElement.classList.add(t);
@@ -75,6 +90,23 @@ function applyThemeClass(t: ThemeMode) {
     const colors: Record<ThemeMode, string> = { light: '#f5f7f5', dark: '#171f2b', glass: '#141b2d' };
     meta.setAttribute('content', colors[t]);
   }
+}
+
+function applyAccentColor(accent: AccentColor, theme: ThemeMode) {
+  const root = document.documentElement;
+  if (theme === 'glass') return; // glass has its own accent
+  const css = ACCENT_CSS[accent];
+  root.style.setProperty('--primary', css.primary);
+  root.style.setProperty('--ring', css.ring);
+  root.style.setProperty('--gradient-primary', css.gradient);
+  root.style.setProperty('--gradient-hero', css.gradient);
+  root.style.setProperty('--shadow-fab', `0 6px 20px -4px hsl(${css.primary} / 0.4)`);
+  root.style.setProperty('--income', css.primary);
+}
+
+function applyFontSize(fs: FontSize) {
+  const sizes: Record<FontSize, string> = { small: '14px', medium: '16px', large: '18px' };
+  document.documentElement.style.fontSize = sizes[fs];
 }
 
 export function FinanceProvider({ children }: { children: React.ReactNode }) {
@@ -95,12 +127,14 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
   const [userName, setUserName] = useState(() => localStorage.getItem('finance-username') || '');
   const [monthlyIncome, setMonthlyIncome] = useState(() => Number(localStorage.getItem('finance-monthly-income')) || 0);
   const [theme, setThemeState] = useState<ThemeMode>(() => (localStorage.getItem('finance-theme') as ThemeMode) || 'light');
+  const [accentColor, setAccentColorState] = useState<AccentColor>(() => (localStorage.getItem('finance-accent') as AccentColor) || 'green');
+  const [fontSize, setFontSizeState] = useState<FontSize>(() => (localStorage.getItem('finance-fontsize') as FontSize) || 'medium');
   const [customCategories, setCustomCategories] = useState<CustomCategory[]>(() => {
     const s = localStorage.getItem('finance-custom-cats');
     return s ? JSON.parse(s) : [];
   });
 
-  // Persist all state
+  // Persist
   useEffect(() => { localStorage.setItem('finance-transactions', JSON.stringify(transactions)); }, [transactions]);
   useEffect(() => { localStorage.setItem('finance-budgets', JSON.stringify(budgets)); }, [budgets]);
   useEffect(() => { localStorage.setItem('finance-goals', JSON.stringify(goals)); }, [goals]);
@@ -109,21 +143,40 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => { localStorage.setItem('finance-username', userName); }, [userName]);
   useEffect(() => { localStorage.setItem('finance-monthly-income', String(monthlyIncome)); }, [monthlyIncome]);
   useEffect(() => { localStorage.setItem('finance-theme', theme); }, [theme]);
+  useEffect(() => { localStorage.setItem('finance-accent', accentColor); }, [accentColor]);
+  useEffect(() => { localStorage.setItem('finance-fontsize', fontSize); }, [fontSize]);
   useEffect(() => { localStorage.setItem('finance-custom-cats', JSON.stringify(customCategories)); }, [customCategories]);
 
-  // Apply theme on mount
-  useEffect(() => { applyThemeClass(theme); }, []);
+  // Apply on mount
+  useEffect(() => {
+    applyThemeClass(theme);
+    applyAccentColor(accentColor, theme);
+    applyFontSize(fontSize);
+  }, []);
 
   const setTheme = useCallback((t: ThemeMode) => {
     setThemeState(t);
     applyThemeClass(t);
+    // Re-apply accent after theme change (unless glass)
+    const accent = (localStorage.getItem('finance-accent') as AccentColor) || 'green';
+    setTimeout(() => applyAccentColor(accent, t), 50);
+  }, []);
+
+  const setAccentColor = useCallback((c: AccentColor) => {
+    setAccentColorState(c);
+    const t = (localStorage.getItem('finance-theme') as ThemeMode) || 'light';
+    applyAccentColor(c, t);
+  }, []);
+
+  const setFontSize = useCallback((f: FontSize) => {
+    setFontSizeState(f);
+    applyFontSize(f);
   }, []);
 
   const addTransaction = useCallback((t: Omit<Transaction, 'id'>) => {
     const newTx: Transaction = { ...t, id: crypto.randomUUID() };
     setTransactions(prev => [newTx, ...prev]);
 
-    // Goal contribution
     if (t.goalId) {
       setGoals(prev => {
         const updated = prev.map(g => g.id === t.goalId ? { ...g, savedAmount: g.savedAmount + t.amount } : g);
@@ -142,14 +195,14 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
         );
         const budget = updated.find(b => b.category === t.category);
         if (budget && budget.spent >= budget.limit) {
-          toast.warning(`⚠️ Budget exceeded for ${t.category}! Spent ${currency}${budget.spent.toLocaleString()} of ${currency}${budget.limit.toLocaleString()}`);
+          toast.warning(`⚠️ Budget exceeded for ${t.category}!`);
         } else if (budget && budget.spent >= budget.limit * 0.8) {
           toast.info(`${t.category} budget is at ${Math.round((budget.spent / budget.limit) * 100)}%`);
         }
         return updated;
       });
     }
-  }, [currency]);
+  }, []);
 
   const updateTransaction = useCallback((id: string, updates: Partial<Transaction>) => {
     setTransactions(prev => prev.map(t => t.id === id ? { ...t, ...updates } : t));
@@ -162,19 +215,15 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
   const addBudget = useCallback((b: Omit<Budget, 'id'>) => {
     setBudgets(prev => [...prev, { ...b, id: crypto.randomUUID() }]);
   }, []);
-
   const updateBudget = useCallback((id: string, updates: Partial<Budget>) => {
     setBudgets(prev => prev.map(b => b.id === id ? { ...b, ...updates } : b));
   }, []);
-
   const deleteBudget = useCallback((id: string) => {
     setBudgets(prev => prev.filter(b => b.id !== id));
   }, []);
-
   const addGoal = useCallback((g: Omit<Goal, 'id'>) => {
     setGoals(prev => [...prev, { ...g, id: crypto.randomUUID() }]);
   }, []);
-
   const updateGoal = useCallback((id: string, updates: Partial<Goal>) => {
     setGoals(prev => {
       const updated = prev.map(g => g.id === id ? { ...g, ...updates } : g);
@@ -185,7 +234,6 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       return updated;
     });
   }, []);
-
   const deleteGoal = useCallback((id: string) => {
     setGoals(prev => prev.filter(g => g.id !== id));
   }, []);
@@ -206,8 +254,17 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     setOnboarded(false);
     setCustomCategories([]);
     setTheme('light');
+    setAccentColor('green');
+    setFontSize('medium');
+    document.documentElement.style.removeProperty('--primary');
+    document.documentElement.style.removeProperty('--ring');
+    document.documentElement.style.removeProperty('--gradient-primary');
+    document.documentElement.style.removeProperty('--gradient-hero');
+    document.documentElement.style.removeProperty('--shadow-fab');
+    document.documentElement.style.removeProperty('--income');
+    document.documentElement.style.fontSize = '16px';
     toast.success('All data reset! Starting fresh.');
-  }, [setTheme]);
+  }, [setTheme, setAccentColor, setFontSize]);
 
   return (
     <FinanceContext.Provider value={{
@@ -219,6 +276,8 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
       userName, setUserName,
       monthlyIncome, setMonthlyIncome,
       theme, setTheme,
+      accentColor, setAccentColor,
+      fontSize, setFontSize,
       customCategories, addCustomCategory,
       resetAll,
     }}>

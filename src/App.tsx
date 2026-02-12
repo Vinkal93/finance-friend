@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { FinanceProvider, useFinance } from "@/context/FinanceContext";
 import BottomNav from "@/components/BottomNav";
+import AppLock from "@/components/AppLock";
+import QuickAddFAB from "@/components/QuickAddFAB";
 import Dashboard from "./pages/Dashboard";
 import AddTransaction from "./pages/AddTransaction";
 import BudgetPage from "./pages/BudgetPage";
@@ -22,6 +24,7 @@ import CashFlowPage from "./pages/CashFlowPage";
 import NetWorthPage from "./pages/NetWorthPage";
 import SavingsChallengesPage from "./pages/SavingsChallengesPage";
 import MonthlySummaryPage from "./pages/MonthlySummaryPage";
+import TransactionTemplatesPage from "./pages/TransactionTemplatesPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -53,8 +56,10 @@ function AppContent() {
           <Route path="/net-worth" element={<NetWorthPage />} />
           <Route path="/challenges" element={<SavingsChallengesPage />} />
           <Route path="/summary" element={<MonthlySummaryPage />} />
+          <Route path="/templates" element={<TransactionTemplatesPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <QuickAddFAB />
         <BottomNav />
       </div>
     </BrowserRouter>
@@ -67,7 +72,9 @@ const App = () => (
       <FinanceProvider>
         <Toaster />
         <Sonner />
-        <AppContent />
+        <AppLock>
+          <AppContent />
+        </AppLock>
       </FinanceProvider>
     </TooltipProvider>
   </QueryClientProvider>
