@@ -91,26 +91,7 @@ export default function ReportBuilderPage() {
     setShowDownloadConfirm(false);
   };
 
-  const downloadImage = async () => {
-    if (!reportRef.current) return;
-    try {
-      const { default: html2canvas } = await import('html2canvas' as any).catch(() => ({ default: null }));
-      if (!html2canvas) {
-        // Fallback: download CSV
-        downloadCSV();
-        return;
-      }
-      const canvas = await html2canvas(reportRef.current);
-      const link = document.createElement('a');
-      link.download = `report-${startDate}-to-${endDate}.png`;
-      link.href = canvas.toDataURL();
-      link.click();
-      toast.success('Report image saved!');
-    } catch {
-      downloadCSV();
-    }
-    setShowDownloadConfirm(false);
-  };
+  // Image download removed - using CSV only
 
   return (
     <div className="pb-24 px-4 pt-6 max-w-lg mx-auto">
