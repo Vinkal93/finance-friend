@@ -25,6 +25,9 @@ import NetWorthPage from "./pages/NetWorthPage";
 import SavingsChallengesPage from "./pages/SavingsChallengesPage";
 import MonthlySummaryPage from "./pages/MonthlySummaryPage";
 import TransactionTemplatesPage from "./pages/TransactionTemplatesPage";
+import SmartTagsPage from "./pages/SmartTagsPage";
+import ReportBuilderPage from "./pages/ReportBuilderPage";
+import DashboardCustomizePage from "./pages/DashboardCustomizePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -57,6 +60,9 @@ function AppContent() {
           <Route path="/challenges" element={<SavingsChallengesPage />} />
           <Route path="/summary" element={<MonthlySummaryPage />} />
           <Route path="/templates" element={<TransactionTemplatesPage />} />
+          <Route path="/smart-tags" element={<SmartTagsPage />} />
+          <Route path="/reports" element={<ReportBuilderPage />} />
+          <Route path="/customize-dashboard" element={<DashboardCustomizePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <QuickAddFAB />
