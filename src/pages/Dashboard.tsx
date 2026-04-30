@@ -39,13 +39,18 @@ const TOOLS = [
 export default function Dashboard() {
   const { transactions, currency, userName, budgets, goals } = useFinance();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
+  // Skeleton only on first load per session
+  const [loading, setLoading] = useState(() => !sessionStorage.getItem('dashboard-loaded'));
   const [widgets] = useLocalStorage<DashboardWidget[]>('finance-dashboard-widgets', DEFAULT_WIDGETS);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 600);
+    if (!loading) return;
+    const timer = setTimeout(() => {
+      setLoading(false);
+      sessionStorage.setItem('dashboard-loaded', '1');
+    }, 500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [loading]);
 
   const { totalIncome, totalExpense, balance } = useMemo(() => {
     const inc = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
@@ -91,7 +96,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="pb-24 px-4 pt-6 max-w-lg mx-auto">
+      <div className="pb-32 px-4 pt-6 max-w-lg mx-auto">
         <div className="flex items-center justify-between mb-5">
           <div>
             <div className="h-4 w-32 bg-muted rounded-full mb-2 animate-pulse" />
@@ -271,7 +276,7 @@ export default function Dashboard() {
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-      <div className="pb-24 px-4 pt-6 max-w-lg mx-auto">
+      <div className="pb-32 px-4 pt-6 max-w-lg mx-auto">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-5">
           <div>
