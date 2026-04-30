@@ -185,6 +185,33 @@ export default function AddTransaction() {
           <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Note</label>
           <input type="text" value={note} onChange={e => setNote(e.target.value)} placeholder="What was this for?"
             className="w-full bg-card border border-border rounded-xl py-3 px-4 text-sm card-shadow focus:outline-none focus:ring-2 focus:ring-primary/30" />
+
+          {/* Smart tag auto-suggest */}
+          {category && (() => {
+            const matchCat = category === 'Custom' && customName ? customName : category;
+            const suggestions = smartTags.filter(t => t.parentCategory === matchCat);
+            if (suggestions.length === 0) return null;
+            return (
+              <div className="mt-2">
+                <div className="flex items-center gap-1 mb-1.5">
+                  <Sparkles className="w-3 h-3 text-primary" />
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Smart tags</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {suggestions.map(t => (
+                    <button key={t.id} type="button" onClick={() => setNote(t.name)}
+                      className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
+                        note.toLowerCase() === t.name.toLowerCase()
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-secondary text-muted-foreground'
+                      }`}>
+                      {t.emoji} {t.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
         </div>
         <div>
           <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Date</label>
