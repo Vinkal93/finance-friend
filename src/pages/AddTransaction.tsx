@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useFinance } from '@/context/FinanceContext';
 import { EXPENSE_ICONS, INCOME_ICONS, PAYMENT_MODES, EMOJI_PICKER } from '@/types/finance';
 import { motion } from 'framer-motion';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Check } from 'lucide-react';
+import { ArrowLeft, Check, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import type { SmartTag } from '@/pages/SmartTagsPage';
 
 const EXPENSE_CATS = ['Food', 'Travel', 'Rent', 'Bills', 'Shopping', 'Health', 'Entertainment', 'Education', 'Custom'];
 const INCOME_CATS = ['Salary', 'Freelance', 'Business', 'Investment', 'Other'];
@@ -14,6 +16,7 @@ export default function AddTransaction() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const editId = searchParams.get('edit');
+  const [smartTags] = useLocalStorage<SmartTag[]>('finance-smart-tags', []);
 
   const [type, setType] = useState<'income' | 'expense'>('expense');
   const [amount, setAmount] = useState('');
