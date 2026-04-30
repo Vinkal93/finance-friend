@@ -28,6 +28,9 @@ import TransactionTemplatesPage from "./pages/TransactionTemplatesPage";
 import SmartTagsPage from "./pages/SmartTagsPage";
 import ReportBuilderPage from "./pages/ReportBuilderPage";
 import DashboardCustomizePage from "./pages/DashboardCustomizePage";
+import AIAssistantPage from "./pages/AIAssistantPage";
+import PredictiveAnalyticsPage from "./pages/PredictiveAnalyticsPage";
+import QuickAddSettingsPage from "./pages/QuickAddSettingsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -63,6 +66,9 @@ function AppContent() {
           <Route path="/smart-tags" element={<SmartTagsPage />} />
           <Route path="/reports" element={<ReportBuilderPage />} />
           <Route path="/customize-dashboard" element={<DashboardCustomizePage />} />
+          <Route path="/ai-assistant" element={<AIAssistantPage />} />
+          <Route path="/forecast" element={<PredictiveAnalyticsPage />} />
+          <Route path="/quick-add-settings" element={<QuickAddSettingsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <QuickAddFAB />

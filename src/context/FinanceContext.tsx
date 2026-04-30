@@ -245,6 +245,8 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
   const resetAll = useCallback(() => {
     const keys = Object.keys(localStorage).filter(k => k.startsWith('finance-'));
     keys.forEach(k => localStorage.removeItem(k));
+    // Also clear PIN key (already starts with finance-) and session flags
+    sessionStorage.removeItem('dashboard-loaded');
     setTransactions([]);
     setBudgets([]);
     setGoals([]);

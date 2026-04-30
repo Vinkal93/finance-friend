@@ -2,11 +2,13 @@ import { useFinance } from '@/context/FinanceContext';
 import { CURRENCY_OPTIONS } from '@/types/finance';
 import { ThemeMode, AccentColor, FontSize } from '@/context/FinanceContext';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Download, User, DollarSign, Palette, RotateCcw, Lock, Type, Paintbrush } from 'lucide-react';
+import { ArrowLeft, Download, User, DollarSign, Palette, RotateCcw, Lock, Type, Paintbrush, Phone, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import ConfirmDialog from '@/components/ConfirmDialog';
+import ResetConfirmDialog from '@/components/ResetConfirmDialog';
+import { downloadFile } from '@/lib/download';
 
 const THEMES: { value: ThemeMode; label: string; icon: string; desc: string }[] = [
   { value: 'light', label: 'Light', icon: '☀️', desc: 'Clean & bright' },
@@ -38,21 +40,16 @@ export default function SettingsPage() {
   const [showExportConfirm, setShowExportConfirm] = useState(false);
   const [showPinSetup, setShowPinSetup] = useState(false);
   const [pinInput, setPinInput] = useState('');
+  const [phoneInput, setPhoneInput] = useState(localStorage.getItem('finance-recovery-phone') || '');
   const hasPin = !!localStorage.getItem('finance-pin');
+  const recoveryPhone = localStorage.getItem('finance-recovery-phone') || '';
 
-  const exportCSV = () => {
+  const exportCSV = async () => {
     const headers = 'Date,Type,Category,Amount,Note,Payment Mode\n';
     const rows = transactions.map(t =>
       `${t.date},${t.type},${t.category},${t.amount},"${t.note}",${t.paymentMode || 'N/A'}`
     ).join('\n');
-    const blob = new Blob([headers + rows], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `transactions-${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast.success('CSV exported successfully!');
+    await downloadFile(`transactions-${new Date().toISOString().split('T')[0]}.csv`, headers + rows, 'text/csv');
     setShowExportConfirm(false);
   };
 
@@ -60,14 +57,19 @@ export default function SettingsPage() {
   const saveIncome = () => { setMonthlyIncome(Number(editIncome) || 0); toast.success('Monthly income updated!'); };
 
   const handlePinSave = () => {
-    if (pinInput.length === 4) {
-      localStorage.setItem('finance-pin', pinInput);
-      toast.success('PIN set! App will be locked on next open.');
-      setShowPinSetup(false);
-      setPinInput('');
-    } else {
+    if (pinInput.length !== 4) {
       toast.error('PIN must be 4 digits');
+      return;
     }
+    localStorage.setItem('finance-pin', pinInput);
+    if (phoneInput.trim()) {
+      localStorage.setItem('finance-recovery-phone', phoneInput.trim());
+      toast.success('PIN set with phone recovery!');
+    } else {
+      toast.success('PIN set (no recovery phone — add one for safety)');
+    }
+    setShowPinSetup(false);
+    setPinInput('');
   };
 
   const removePin = () => {
@@ -75,8 +77,18 @@ export default function SettingsPage() {
     toast.success('PIN removed');
   };
 
+  const savePhone = () => {
+    if (phoneInput.trim()) {
+      localStorage.setItem('finance-recovery-phone', phoneInput.trim());
+      toast.success('Recovery phone updated');
+    } else {
+      localStorage.removeItem('finance-recovery-phone');
+      toast.success('Recovery phone removed');
+    }
+  };
+
   return (
-    <div className="pb-24 px-4 pt-6 max-w-lg mx-auto">
+    <div className="pb-28 px-4 pt-6 max-w-lg mx-auto">
       <div className="flex items-center gap-3 mb-6">
         <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center">
           <ArrowLeft className="w-5 h-5" />
@@ -177,12 +189,31 @@ export default function SettingsPage() {
         </div>
       </motion.div>
 
-      {/* App Lock */}
+      {/* App Lock & Recovery Phone */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bg-card rounded-2xl p-5 card-shadow mb-4">
         <div className="flex items-center gap-3 mb-4">
           <Lock className="w-5 h-5 text-primary" />
-          <h2 className="text-sm font-bold">App Lock</h2>
+          <h2 className="text-sm font-bold">App Lock & Recovery</h2>
         </div>
+
+        {/* Recovery phone */}
+        <div className="mb-4">
+          <label className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5">
+            <Phone className="w-3 h-3" /> Recovery Phone (optional)
+          </label>
+          <div className="flex gap-2">
+            <input type="tel" value={phoneInput} onChange={e => setPhoneInput(e.target.value)}
+              placeholder="e.g. 9876543210"
+              className="flex-1 bg-secondary rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+            <button onClick={savePhone} className="px-3 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold">Save</button>
+          </div>
+          {recoveryPhone && (
+            <p className="text-[10px] text-muted-foreground mt-1.5">
+              Currently set: ••••••{recoveryPhone.slice(-2)} — used to recover access if you forget PIN
+            </p>
+          )}
+        </div>
+
         {hasPin ? (
           <div className="flex gap-2">
             <button onClick={removePin} className="flex-1 py-2.5 rounded-xl bg-expense/10 text-expense text-xs font-semibold">Remove PIN</button>
@@ -192,15 +223,30 @@ export default function SettingsPage() {
           <button onClick={() => setShowPinSetup(true)} className="w-full py-2.5 rounded-xl bg-primary/10 text-primary text-sm font-semibold">Set PIN Lock</button>
         )}
         {showPinSetup && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-3">
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-3 space-y-2">
             <input type="password" maxLength={4} value={pinInput} onChange={e => setPinInput(e.target.value.replace(/\D/g, ''))}
               placeholder="Enter 4-digit PIN" className="w-full bg-secondary rounded-lg py-2.5 px-3 text-sm text-center tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-primary/30" />
-            <div className="flex gap-2 mt-2">
+            <p className="text-[10px] text-muted-foreground">
+              💡 Make sure your recovery phone is set above so you can recover access if you forget your PIN.
+            </p>
+            <div className="flex gap-2">
               <button onClick={() => { setShowPinSetup(false); setPinInput(''); }} className="flex-1 py-2 rounded-lg bg-secondary text-xs font-semibold">Cancel</button>
               <button onClick={handlePinSave} className="flex-1 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold">Save PIN</button>
             </div>
           </motion.div>
         )}
+      </motion.div>
+
+      {/* Quick Add Settings */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.17 }} className="bg-card rounded-2xl p-5 card-shadow mb-4">
+        <button onClick={() => navigate('/quick-add-settings')} className="w-full flex items-center gap-3">
+          <Zap className="w-5 h-5 text-primary" />
+          <div className="text-left flex-1">
+            <p className="text-sm font-bold">Quick Add Items</p>
+            <p className="text-xs text-muted-foreground">Customize the ⚡ floating button</p>
+          </div>
+          <span className="text-muted-foreground">›</span>
+        </button>
       </motion.div>
 
       {/* Export */}
@@ -220,12 +266,16 @@ export default function SettingsPage() {
           <RotateCcw className="w-5 h-5 text-expense" />
           <div className="text-left">
             <p className="text-sm font-bold text-expense">Reset All Data</p>
-            <p className="text-xs text-muted-foreground">Delete everything and start fresh</p>
+            <p className="text-xs text-muted-foreground">3-step confirmation • cannot be undone</p>
           </div>
         </button>
       </motion.div>
 
-      <ConfirmDialog open={showResetConfirm} title="Reset All Data?" message="This will permanently delete all your transactions, budgets, goals, and settings. This action cannot be undone. Are you sure?" confirmText="Reset Everything" destructive onConfirm={() => { resetAll(); setShowResetConfirm(false); }} onCancel={() => setShowResetConfirm(false)} />
+      <ResetConfirmDialog
+        open={showResetConfirm}
+        onConfirm={() => { resetAll(); setShowResetConfirm(false); }}
+        onCancel={() => setShowResetConfirm(false)}
+      />
       <ConfirmDialog open={showExportConfirm} title="Export Transactions?" message="This will download all your transactions as a CSV file. Continue?" confirmText="Export CSV" onConfirm={exportCSV} onCancel={() => setShowExportConfirm(false)} />
     </div>
   );

@@ -15,7 +15,7 @@ export default function BottomNav() {
   const navigate = useNavigate();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-lg border-t border-border safe-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 z-30 bg-card/95 backdrop-blur-lg border-t border-border safe-bottom">
       <div className="flex items-center justify-around px-2 pt-2 pb-1 max-w-lg mx-auto">
         {NAV_ITEMS.map(({ path, icon: Icon, label, isFab }) => {
           const isActive = location.pathname === path;

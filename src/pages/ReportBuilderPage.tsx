@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LineChart, Line } from 'recharts';
 import { toast } from 'sonner';
 import ConfirmDialog from '@/components/ConfirmDialog';
+import { downloadFile } from '@/lib/download';
 
 const COLORS = ['#2d9d6f', '#e8553a', '#e89c3a', '#3b82f6', '#8b5cf6', '#ec4899', '#14b8a6', '#f59e0b', '#6366f1'];
 type ChartType = 'pie' | 'bar' | 'line';
@@ -76,18 +77,11 @@ export default function ReportBuilderPage() {
     return Object.entries(map).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value);
   }, [filtered]);
 
-  const downloadCSV = () => {
+  const downloadCSV = async () => {
     const headers = 'Date,Type,Category,Amount,Note,Payment Mode\n';
     const rows = filtered.map(t => `${t.date},${t.type},${t.category},${t.amount},"${t.note}",${t.paymentMode || 'N/A'}`).join('\n');
     const summary = `\n\nSummary\nTotal Income,${totalIncome}\nTotal Expense,${totalExpense}\nNet,${totalIncome - totalExpense}\nPeriod,${startDate} to ${endDate}\nTransactions,${filtered.length}`;
-    const blob = new Blob([headers + rows + summary], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `report-${startDate}-to-${endDate}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast.success('Report downloaded!');
+    await downloadFile(`report-${startDate}-to-${endDate}.csv`, headers + rows + summary, 'text/csv');
     setShowDownloadConfirm(false);
   };
 
