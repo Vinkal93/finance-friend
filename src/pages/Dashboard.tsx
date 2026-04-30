@@ -22,18 +22,20 @@ function AnimatedNumber({ value, currency }: { value: number; currency: string }
 }
 
 const TOOLS = [
+  { path: '/ai-assistant', icon: '🤖', label: 'AI Chat' },
+  { path: '/forecast', icon: '🔮', label: 'Predict' },
   { path: '/summary', icon: '📊', label: 'Summary' },
   { path: '/health-score', icon: '💯', label: 'Score' },
   { path: '/bills', icon: '📋', label: 'Bills' },
   { path: '/split', icon: '✂️', label: 'Split' },
   { path: '/subscriptions', icon: '📺', label: 'Subs' },
   { path: '/emi', icon: '🏦', label: 'EMI' },
-  { path: '/cash-flow', icon: '📈', label: 'Forecast' },
-  { path: '/net-worth', icon: '💰', label: 'Net Worth' },
-  { path: '/challenges', icon: '🎯', label: 'Challenge' },
-  { path: '/templates', icon: '⚡', label: 'Templates' },
+  { path: '/cash-flow', icon: '📈', label: 'Cash' },
+  { path: '/net-worth', icon: '💰', label: 'Worth' },
+  { path: '/challenges', icon: '🎯', label: 'Goals' },
+  { path: '/templates', icon: '⚡', label: 'Templ' },
   { path: '/smart-tags', icon: '🏷️', label: 'Tags' },
-  { path: '/reports', icon: '📑', label: 'Reports' },
+  { path: '/reports', icon: '📑', label: 'Report' },
 ];
 
 export default function Dashboard() {
