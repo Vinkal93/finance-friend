@@ -2,8 +2,9 @@ import { useMemo } from 'react';
 import { useFinance } from '@/context/FinanceContext';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, TrendingUp, AlertTriangle, Target, Calendar } from 'lucide-react';
+import { ArrowLeft, TrendingUp, AlertTriangle, Target, Calendar, Download, FileText } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
+import { downloadFile } from '@/lib/download';
 
 export default function PredictiveAnalyticsPage() {
   const { transactions, currency, monthlyIncome, budgets } = useFinance();
@@ -84,14 +85,85 @@ export default function PredictiveAnalyticsPage() {
     return { avgMonthly, nextMonthPredicted, projection, anomalies, budgetForecasts, chartData, monthlySaving };
   }, [transactions, monthlyIncome, budgets]);
 
+  const exportCSV = () => {
+    const lines: string[] = [];
+    lines.push('Forecast Report');
+    lines.push(`Generated,${new Date().toLocaleString()}`);
+    lines.push('');
+    lines.push('Next Month Prediction');
+    lines.push(`Predicted Expense,${currency}${Math.round(analytics.nextMonthPredicted)}`);
+    lines.push(`Avg Monthly Expense,${currency}${Math.round(analytics.avgMonthly)}`);
+    lines.push(`Estimated Monthly Saving,${currency}${Math.round(analytics.monthlySaving)}`);
+    lines.push('');
+    lines.push('6-Month Savings Projection');
+    lines.push('Month,Cumulative Saved,Projected Expense');
+    analytics.projection.forEach(p => lines.push(`${p.month},${currency}${p.saved},${currency}${p.expense}`));
+    lines.push('');
+    lines.push('Budget Breach Forecast');
+    lines.push('Category,Limit,Projected,Status,Breach Day');
+    analytics.budgetForecasts.forEach(b =>
+      lines.push(`${b.category},${currency}${b.limit},${currency}${b.projected},${b.willBreach ? 'WILL BREACH' : 'On Track'},${b.breachDay || '-'}`)
+    );
+    if (analytics.anomalies.length > 0) {
+      lines.push('');
+      lines.push('Anomalies (Unusual Spending)');
+      lines.push('Category,This Month,Average,Ratio');
+      analytics.anomalies.forEach(a =>
+        lines.push(`${a.category},${currency}${Math.round(a.current)},${currency}${Math.round(a.avg)},${a.ratio.toFixed(2)}x`)
+      );
+    }
+    downloadFile(`forecast-${new Date().toISOString().slice(0, 10)}.csv`, lines.join('\n'), 'text/csv');
+  };
+
+  const exportHTML = () => {
+    const projRows = analytics.projection.map(p => `<tr><td>${p.month}</td><td>${currency}${p.saved.toLocaleString()}</td><td>${currency}${p.expense.toLocaleString()}</td></tr>`).join('');
+    const budRows = analytics.budgetForecasts.map(b => `<tr><td>${b.category}</td><td>${currency}${b.limit.toLocaleString()}</td><td>${currency}${b.projected.toLocaleString()}</td><td style="color:${b.willBreach ? '#dc2626' : '#16a34a'}">${b.willBreach ? `Breach by day ${b.breachDay}` : 'On track'}</td></tr>`).join('');
+    const anomRows = analytics.anomalies.map(a => `<tr><td>${a.category}</td><td>${currency}${Math.round(a.current).toLocaleString()}</td><td>${currency}${Math.round(a.avg).toLocaleString()}</td><td>${Math.round(a.ratio * 100)}%</td></tr>`).join('');
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Forecast Report</title><style>
+body{font-family:-apple-system,sans-serif;max-width:800px;margin:24px auto;padding:0 20px;color:#1a1a1a}
+h1{color:#1a7a4e}h2{margin-top:28px;border-bottom:2px solid #eee;padding-bottom:6px}
+table{width:100%;border-collapse:collapse;margin-top:8px}th,td{padding:8px;text-align:left;border-bottom:1px solid #eee;font-size:13px}
+th{background:#f5f7f5}.hero{background:linear-gradient(135deg,#1a7a4e,#0f5e3a);color:#fff;padding:20px;border-radius:12px;margin:16px 0}
+.hero p{margin:4px 0}.big{font-size:28px;font-weight:800}.muted{color:#666;font-size:12px}
+@media print{body{margin:0}}
+</style></head><body>
+<h1>📊 Forecast Report</h1>
+<p class="muted">Generated ${new Date().toLocaleString()}</p>
+<div class="hero">
+  <p>Next Month Predicted Expense</p>
+  <p class="big">${currency}${Math.round(analytics.nextMonthPredicted).toLocaleString()}</p>
+  <p>Avg monthly: ${currency}${Math.round(analytics.avgMonthly).toLocaleString()} • Est. monthly saving: ${currency}${Math.round(analytics.monthlySaving).toLocaleString()}</p>
+</div>
+<h2>6-Month Savings Projection</h2>
+<table><tr><th>Month</th><th>Cumulative Saved</th><th>Projected Expense</th></tr>${projRows}</table>
+<h2>Budget Breach Forecast</h2>
+<table><tr><th>Category</th><th>Limit</th><th>Projected</th><th>Status</th></tr>${budRows || '<tr><td colspan="4" class="muted">No budgets set</td></tr>'}</table>
+${analytics.anomalies.length > 0 ? `<h2>⚠️ Unusual Spending Alerts</h2>
+<table><tr><th>Category</th><th>This Month</th><th>Average</th><th>vs Normal</th></tr>${anomRows}</table>` : ''}
+<p class="muted" style="margin-top:32px">Tip: Open this file and use your browser's "Print → Save as PDF" option to get a PDF.</p>
+</body></html>`;
+    downloadFile(`forecast-${new Date().toISOString().slice(0, 10)}.html`, html, 'text/html');
+  };
+
   return (
     <div className="pb-28 px-4 pt-6 max-w-lg mx-auto">
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-4">
         <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center">
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="text-xl font-bold">📊 Predictive Analytics</h1>
+        <h1 className="text-xl font-bold flex-1">📊 Predictive Analytics</h1>
       </div>
+
+      {/* Export buttons */}
+      <div className="grid grid-cols-2 gap-2 mb-5">
+        <button onClick={exportCSV} className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-card card-shadow text-xs font-bold active:scale-95 transition-transform">
+          <Download className="w-3.5 h-3.5" /> Export CSV
+        </button>
+        <button onClick={exportHTML} className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl gradient-primary text-primary-foreground text-xs font-bold active:scale-95 transition-transform">
+          <FileText className="w-3.5 h-3.5" /> Export PDF
+        </button>
+      </div>
+
 
       {/* Next month prediction */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl gradient-hero p-5 text-primary-foreground elevated-shadow mb-4">

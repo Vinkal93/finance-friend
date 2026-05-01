@@ -3,10 +3,11 @@ import { useFinance } from '@/context/FinanceContext';
 import { EXPENSE_ICONS, INCOME_ICONS, PAYMENT_MODES, EMOJI_PICKER } from '@/types/finance';
 import { motion } from 'framer-motion';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Check, Sparkles } from 'lucide-react';
+import { ArrowLeft, Check, Sparkles, Wand2, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import type { SmartTag } from '@/pages/SmartTagsPage';
+import { detectAnomaly } from '@/lib/anomaly';
 
 const EXPENSE_CATS = ['Food', 'Travel', 'Rent', 'Bills', 'Shopping', 'Health', 'Entertainment', 'Education', 'Custom'];
 const INCOME_CATS = ['Salary', 'Freelance', 'Business', 'Investment', 'Other'];
@@ -29,6 +30,45 @@ export default function AddTransaction() {
   const [customName, setCustomName] = useState('');
   const [customEmoji, setCustomEmoji] = useState('📌');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+
+  const aiCategorize = async () => {
+    if (!note.trim()) { toast.error('Note dalo pehle (e.g. "Zomato dinner")'); return; }
+    setAiLoading(true);
+    try {
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-categorize`;
+      const history = transactions.slice(0, 50).map(t => ({ note: t.note, category: t.category, type: t.type }));
+      const resp = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ note, amount: Number(amount) || 0, type, history }),
+      });
+      if (!resp.ok) {
+        if (resp.status === 429) toast.error('AI rate limit, thodi der baad');
+        else if (resp.status === 402) toast.error('AI credits khatam');
+        else toast.error('AI failed');
+        return;
+      }
+      const data = await resp.json();
+      if (data.category && allCats.includes(data.category)) {
+        setCategory(data.category);
+        toast.success(`✨ Auto-set: ${data.category}${data.confidence ? ` (${Math.round(data.confidence * 100)}%)` : ''}`);
+      } else if (data.category) {
+        // Fall back to "Other" or closest
+        setCategory(data.category);
+        toast.success(`✨ ${data.category}`);
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error('AI error');
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
 
   useEffect(() => {
     if (editId) {
@@ -76,8 +116,17 @@ export default function AddTransaction() {
       updateTransaction(editId, data);
       toast.success('Transaction updated!');
     } else {
+      const anomaly = detectAnomaly(
+        { amount: parseFloat(amount), category: finalCategory, type },
+        transactions
+      );
       addTransaction(data);
       toast.success(`${type === 'income' ? 'Income' : 'Expense'} added!`);
+      if (anomaly.isAnomaly) {
+        setTimeout(() => {
+          toast.warning(`⚠️ Unusual spend: ${anomaly.reason}`, { duration: 6000 });
+        }, 400);
+      }
     }
     navigate('/');
   };
@@ -182,8 +231,15 @@ export default function AddTransaction() {
       {/* Note, Date, Recurring */}
       <div className="space-y-4 mb-8">
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Note</label>
-          <input type="text" value={note} onChange={e => setNote(e.target.value)} placeholder="What was this for?"
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="text-xs font-medium text-muted-foreground">Note</label>
+            <button type="button" onClick={aiCategorize} disabled={aiLoading || !note.trim()}
+              className="flex items-center gap-1 text-[10px] font-bold text-primary disabled:opacity-40">
+              {aiLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
+              AI auto-categorize
+            </button>
+          </div>
+          <input type="text" value={note} onChange={e => setNote(e.target.value)} placeholder="What was this for? (e.g. Zomato dinner)"
             className="w-full bg-card border border-border rounded-xl py-3 px-4 text-sm card-shadow focus:outline-none focus:ring-2 focus:ring-primary/30" />
 
           {/* Smart tag auto-suggest */}
