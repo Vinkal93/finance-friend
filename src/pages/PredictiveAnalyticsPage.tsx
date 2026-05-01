@@ -2,8 +2,9 @@ import { useMemo } from 'react';
 import { useFinance } from '@/context/FinanceContext';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, TrendingUp, AlertTriangle, Target, Calendar } from 'lucide-react';
+import { ArrowLeft, TrendingUp, AlertTriangle, Target, Calendar, Download, FileText } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
+import { downloadFile } from '@/lib/download';
 
 export default function PredictiveAnalyticsPage() {
   const { transactions, currency, monthlyIncome, budgets } = useFinance();
