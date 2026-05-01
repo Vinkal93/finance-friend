@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Finance Friend | Smart Money Manager</title>
+    <meta name="description"
+        content="Finance Friend Privacy Policy. Learn how we handle your data, use Google AdMob for ads, and protect your privacy.">
+    <meta name="keywords"
+        content="Finance Friend, privacy policy, data protection, AdMob, personal finance app, Vinkal">
+    <meta name="author" content="Vinkal">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Privacy Policy - Finance Friend">
+    <meta property="og:description"
+        content="Read how Finance Friend handles your data and protects your privacy.">
+    <meta property="og:type" content="website">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a7a4e">
+    <link rel="icon" href="Assets/favicon.ico" type="image/x-icon">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #1a7a4e;
+            --primary-dark: #145e3c;
+            --primary-light: #22a56a;
+            --primary-glow: rgba(26, 122, 78, 0.15);
+            --accent: #10b981;
+            --bg-body: #f8fafb;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f0fdf4;
+            --bg-glass: rgba(255, 255, 255, 0.85);
+            --border-color: rgba(0, 0, 0, 0.07);
+            --border-strong: rgba(0, 0, 0, 0.12);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+            --gradient-primary: linear-gradient(135deg, #1a7a4e, #10b981);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #0a0f1a;
+            --bg-card: #111827;
+            --bg-card-hover: #1a2235;
+            --bg-glass: rgba(17, 24, 39, 0.85);
+            --border-color: rgba(255, 255, 255, 0.06);
+            --border-strong: rgba(255, 255, 255, 0.1);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-primary);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            transition: background var(--transition), color var(--transition);
+        }
+        a { color: var(--primary); text-decoration: none; }
+        a:hover { color: var(--primary-light); }
+        ::selection { background: var(--primary); color: #fff; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-body); }
+        ::-webkit-scrollbar-thumb { background: var(--primary-dark); border-radius: 3px; }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+        /* Navbar */
+        .navbar {
+            position: sticky; top: 0; z-index: 100; padding: 14px 0;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            background: var(--bg-glass); border-bottom: 1px solid var(--border-color);
+        }
+        .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 900px; margin: 0 auto; padding: 0 24px; }
+        .nav-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; color: var(--text-primary); }
+        .nav-brand .icon { width: 34px; height: 34px; background: var(--gradient-primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+        .nav-links { display: flex; gap: 6px; list-style: none; align-items: center; }
+        .nav-links a { padding: 7px 14px; color: var(--text-secondary); font-size: 0.85rem; font-weight: 500; border-radius: 8px; transition: all var(--transition); }
+        .nav-links a:hover { color: var(--text-primary); background: var(--bg-card-hover); }
+        .nav-links a.active { color: var(--primary); background: rgba(26,122,78,0.06); }
+        .theme-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: none; border: 1px solid var(--border-color); border-radius: 50%; color: var(--text-secondary); cursor: pointer; font-size: 1rem; transition: all var(--transition); }
+        .theme-btn:hover { background: var(--bg-card-hover); }
+
+        /* Page Header */
+        .page-header { padding: 60px 0 40px; text-align: center; }
+        .page-header .tag { display: inline-block; padding: 5px 14px; background: rgba(26,122,78,0.08); border: 1px solid rgba(26,122,78,0.15); border-radius: 50px; font-size: 0.78rem; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
+        .page-header h1 { font-size: clamp(1.8rem,3.5vw,2.5rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px; }
+        .page-header p { color: var(--text-secondary); max-width: 560px; margin: 0 auto; font-size: 1.05rem; }
+
+        /* Policy Content */
+        .policy-card {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: var(--radius); padding: 48px; margin-bottom: 40px;
+            box-shadow: var(--shadow-card);
+        }
+        .last-updated { display: inline-block; padding: 6px 14px; background: rgba(26,122,78,0.06); border: 1px solid rgba(26,122,78,0.1); border-radius: 6px; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 28px; }
+        .policy-card h2 { font-size: 1.3rem; font-weight: 700; margin-top: 36px; margin-bottom: 14px; color: var(--text-primary); padding-bottom: 8px; border-bottom: 2px solid rgba(26,122,78,0.1); }
+        .policy-card h2:first-of-type { margin-top: 0; }
+        .policy-card h3 { font-size: 1.05rem; font-weight: 600; margin-top: 20px; margin-bottom: 8px; color: var(--primary); }
+        .policy-card p, .policy-card li { font-size: 0.92rem; color: var(--text-secondary); line-height: 1.85; }
+        .policy-card ul, .policy-card ol { padding-left: 20px; margin: 10px 0; }
+        .policy-card li { margin-bottom: 6px; }
+        .policy-card li::marker { color: var(--primary); }
+        .policy-card strong { color: var(--text-primary); }
+        .highlight-box { background: rgba(26,122,78,0.04); border: 1px solid rgba(26,122,78,0.12); border-radius: var(--radius-sm); padding: 20px 24px; margin: 16px 0; }
+        .highlight-box p { font-size: 0.9rem; }
+        .warning-box { background: rgba(234,179,8,0.06); border: 1px solid rgba(234,179,8,0.2); border-radius: var(--radius-sm); padding: 20px 24px; margin: 16px 0; }
+        .warning-box p { font-size: 0.9rem; color: var(--text-secondary); }
+
+        /* Table */
+        .data-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.88rem; }
+        .data-table th, .data-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .data-table th { background: rgba(26,122,78,0.06); color: var(--primary); font-weight: 600; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .data-table td { color: var(--text-secondary); }
+
+        /* Footer */
+        .footer { padding: 40px 0; border-top: 1px solid var(--border-color); text-align: center; }
+        .footer p { font-size: 0.85rem; color: var(--text-muted); }
+        .footer-links { display: flex; gap: 24px; list-style: none; justify-content: center; margin-top: 12px; }
+        .footer-links a { font-size: 0.85rem; color: var(--text-muted); }
+        .footer-links a:hover { color: var(--primary); }
+
+        @media (max-width: 768px) {
+            .policy-card { padding: 24px 18px; }
+            .nav-links { gap: 2px; }
+            .nav-links a { padding: 6px 10px; font-size: 0.8rem; }
+            .data-table th, .data-table td { padding: 10px 12px; font-size: 0.82rem; }
+        }
+        @media (max-width: 480px) {
+            .page-header { padding: 40px 0 28px; }
+            .nav-links a { padding: 5px 8px; font-size: 0.75rem; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- NAVIGATION -->
+    <nav class="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-brand">
+                <span class="icon">💰</span>
+                Finance Friend
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="privacy.html" class="active">Privacy</a></li>
+                <li><a href="terms.html">Terms</a></li>
+                <li><button class="theme-btn" id="themeToggle" aria-label="Toggle theme">🌙</button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- PAGE HEADER -->
+    <section class="page-header">
+        <div class="container">
+            <span class="tag">Legal</span>
+            <h1>Privacy Policy</h1>
+            <p>Your privacy matters to us. This policy explains how Finance Friend handles your data transparently and responsibly.</p>
+        </div>
+    </section>
+
+    <!-- PRIVACY POLICY CONTENT -->
+    <section style="padding: 0 0 60px;">
+        <div class="container">
+            <div class="policy-card">
+                <span class="last-updated">Last Updated: May 1, 2026</span>
+
+                <h2>1. Introduction</h2>
+                <p>Finance Friend ("we", "our", or "us") is a personal finance management application developed by <strong>Vinkal</strong>. We are committed to protecting your privacy and ensuring the security of your personal information.</p>
+                <p>This Privacy Policy explains how we collect, use, store, and protect information when you use our mobile application ("App"), available on the Google Play Store under the package name <strong>com.vinkal.financefriend</strong>.</p>
+                <p>By downloading, installing, or using Finance Friend, you agree to the terms described in this Privacy Policy. If you do not agree, please discontinue use of the App.</p>
+
+                <h2>2. Information We Collect</h2>
+                <p>Finance Friend is designed with a <strong>privacy-first, offline-first approach</strong>. Below is a transparent breakdown of the data involved when you use our App:</p>
+
+                <h3>2.1 Data Stored Locally on Your Device</h3>
+                <p>The following data is created, entered, and stored <strong>entirely on your device</strong>. We do not have access to this data, nor is it transmitted to any server:</p>
+                <ul>
+                    <li><strong>Financial Data:</strong> Transaction records (income, expenses), budget settings, savings goals, bill reminders, subscription details, EMI calculations, net worth entries, and other financial data you manually enter.</li>
+                    <li><strong>App Preferences:</strong> Theme settings, dashboard customization, notification preferences, currency settings, and display options.</li>
+                    <li><strong>Security Data:</strong> Your app lock PIN (stored locally in encrypted form on your device).</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <p>✅ <strong>Important:</strong> All your financial records and personal preferences remain on your device. We do not operate any cloud servers or databases to store your personal data. No user accounts or login credentials are required to use the App.</p>
+                </div>
+
+                <h3>2.2 Data Collected by Third-Party Services (Google AdMob)</h3>
+                <p>Finance Friend uses <strong>Google AdMob</strong> to display advertisements within the App. AdMob is a mobile advertising platform operated by Google LLC. When ads are displayed, Google AdMob may automatically collect certain information, including but not limited to:</p>
+                <ul>
+                    <li><strong>Device Identifiers:</strong> Advertising ID (Google Advertising ID / AAID)</li>
+                    <li><strong>IP Address:</strong> Your device's Internet Protocol address</li>
+                    <li><strong>Device Information:</strong> Device model, operating system version, screen size, and language settings</li>
+                    <li><strong>App Interaction Data:</strong> Information about ad impressions, clicks, and engagement within the App</li>
+                    <li><strong>Cookies & Similar Technologies:</strong> Google may use cookies or similar technologies for ad serving and measurement</li>
+                </ul>
+
+                <div class="warning-box">
+                    <p>⚠️ <strong>Please Note:</strong> This data collection is performed by <strong>Google</strong>, not by Finance Friend directly. We do not have access to, store, or process any of this data ourselves. The data collected by Google AdMob is governed by <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google's Privacy Policy</a>.</p>
+                </div>
+
+                <h2>3. How We Use Information</h2>
+                <p>Since Finance Friend operates primarily offline, the use of data is minimal:</p>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Data Type</th>
+                            <th>Purpose</th>
+                            <th>Stored Where</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Financial records</td>
+                            <td>Expense tracking, budgeting, reports</td>
+                            <td>Locally on device</td>
+                        </tr>
+                        <tr>
+                            <td>App preferences</td>
+                            <td>Personalized app experience</td>
+                            <td>Locally on device</td>
+                        </tr>
+                        <tr>
+                            <td>PIN / Security data</td>
+                            <td>App lock protection</td>
+                            <td>Locally (encrypted)</td>
+                        </tr>
+                        <tr>
+                            <td>Ad-related data</td>
+                            <td>Displaying relevant advertisements</td>
+                            <td>Google servers (by AdMob)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>4. Advertisements & Google AdMob</h2>
+                <p>Finance Friend is a <strong>free application</strong> supported by advertisements. We use Google AdMob to display ads within the App.</p>
+
+                <h3>4.1 Types of Ads</h3>
+                <p>You may see the following types of advertisements:</p>
+                <ul>
+                    <li><strong>Banner Ads:</strong> Small ads displayed at the top or bottom of the screen</li>
+                    <li><strong>Interstitial Ads:</strong> Full-screen ads shown at natural transition points</li>
+                    <li><strong>Rewarded Ads:</strong> Optional ads you can choose to watch for in-app benefits</li>
+                </ul>
+
+                <h3>4.2 Personalized vs. Non-Personalized Ads</h3>
+                <p>Depending on your device settings and consent preferences:</p>
+                <ul>
+                    <li><strong>Personalized Ads:</strong> Google may use your Advertising ID and browsing history to show ads relevant to your interests.</li>
+                    <li><strong>Non-Personalized Ads:</strong> If you have opted out of ad personalization, you will still see ads, but they will not be based on your personal data or browsing behavior.</li>
+                </ul>
+
+                <h3>4.3 Internet Requirement for Ads</h3>
+                <p>While Finance Friend's core features work <strong>completely offline</strong>, an internet connection is required for loading and displaying advertisements. If no internet connection is available, ads will simply not be displayed, and all other App features will continue to work normally.</p>
+
+                <h2>5. Third-Party Services</h2>
+                <p>Finance Friend integrates the following third-party service:</p>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Provider</th>
+                            <th>Purpose</th>
+                            <th>Privacy Policy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Google AdMob</td>
+                            <td>Google LLC</td>
+                            <td>Displaying advertisements</td>
+                            <td><a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">View Policy</a></td>
+                        </tr>
+                        <tr>
+                            <td>Google Play Services</td>
+                            <td>Google LLC</td>
+                            <td>App distribution & updates</td>
+                            <td><a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">View Policy</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>We do not use any analytics services (such as Google Analytics or Firebase Analytics) to track your usage behavior within the App.</p>
+
+                <h2>6. Data We Do NOT Collect</h2>
+                <p>We want to be fully transparent about what we do <strong>not</strong> collect directly:</p>
+                <ul>
+                    <li>We do <strong>NOT</strong> collect your name, email address, phone number, or any personal identification through the App.</li>
+                    <li>We do <strong>NOT</strong> access your device contacts, camera, microphone, or GPS location.</li>
+                    <li>We do <strong>NOT</strong> track your usage behavior or create user profiles.</li>
+                    <li>We do <strong>NOT</strong> sell, rent, or share any of your locally stored data with third parties.</li>
+                    <li>We do <strong>NOT</strong> use analytics tools to monitor your in-app activity.</li>
+                </ul>
+
+                <h2>7. Data Export & Backup</h2>
+                <p>Finance Friend allows you to export your financial data as reports. When you choose to export data:</p>
+                <ul>
+                    <li>The exported file is saved directly to your device's local storage or download folder.</li>
+                    <li>No data is uploaded to any server during the export process.</li>
+                    <li>You are solely responsible for the security and handling of exported files.</li>
+                </ul>
+
+                <h2>8. Local Notifications</h2>
+                <p>Finance Friend may send local notifications for bill reminders, budget alerts, savings milestones, and monthly summary reports. These notifications are generated <strong>entirely on your device</strong> and do not involve any server communication, push notification services, or external data transmission.</p>
+
+                <h2>9. Data Security</h2>
+                <p>We take reasonable measures to protect your information:</p>
+                <ul>
+                    <li>Optional <strong>PIN lock</strong> to prevent unauthorized access to the App.</li>
+                    <li>All personal financial data stays <strong>on your device</strong> with no external transmission.</li>
+                    <li>No cloud storage means <strong>no risk of server-side data breaches</strong>.</li>
+                    <li>Security PINs are stored in an encrypted format on your device.</li>
+                </ul>
+                <p>While we strive to protect your information, no method of electronic storage is 100% secure. We encourage you to keep your device secure and use the App's PIN lock feature.</p>
+
+                <h2>10. Your Rights & Choices</h2>
+                <p>You have the following rights regarding your data and privacy:</p>
+
+                <h3>10.1 Managing Your Data</h3>
+                <ul>
+                    <li>You can delete all your financial data at any time using the "Clear All Data" option in App Settings.</li>
+                    <li>You can export your data before deletion for personal backup.</li>
+                    <li>Uninstalling the App permanently deletes all locally stored data.</li>
+                </ul>
+
+                <h3>10.2 Advertising Preferences</h3>
+                <ul>
+                    <li><strong>Reset Advertising ID:</strong> You can reset your Advertising ID through your Android device settings: <em>Settings → Google → Ads → Reset Advertising ID</em>.</li>
+                    <li><strong>Opt-Out of Personalized Ads:</strong> You can opt out of personalized ads by visiting your device settings: <em>Settings → Google → Ads → Opt out of Ads Personalization</em>.</li>
+                    <li>Even after opting out, you will still see ads, but they will not be personalized based on your data.</li>
+                </ul>
+
+                <h2>11. Children's Privacy</h2>
+                <p>Finance Friend is <strong>not specifically designed for or directed at children under the age of 13</strong>. We do not knowingly collect personally identifiable information from children. The ads displayed through Google AdMob are configured for general audiences.</p>
+                <p>If you are a parent or guardian and believe your child has been exposed to inappropriate content through ads, please contact us, and we will take appropriate action.</p>
+
+                <h2>12. Data Deletion</h2>
+                <p>Since all your personal and financial data is stored locally on your device, you have full control over data deletion:</p>
+                <ul>
+                    <li>Use the <strong>"Clear All Data"</strong> option in the App's Settings to erase all financial records.</li>
+                    <li>Clear the App's data from your device's system settings (<em>Settings → Apps → Finance Friend → Clear Data</em>).</li>
+                    <li><strong>Uninstall the App</strong> — this permanently and irreversibly deletes all associated data from your device.</li>
+                </ul>
+                <p>For data collected by Google AdMob, please refer to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google's data retention and deletion policies</a>.</p>
+
+                <h2>13. Changes to This Privacy Policy</h2>
+                <p>We may update this Privacy Policy from time to time to reflect changes in our practices, third-party services, or applicable laws. Any changes will be posted on this page with an updated "Last Updated" date.</p>
+                <p>We encourage you to review this Privacy Policy periodically. Continued use of the App after changes constitutes your acceptance of the updated policy.</p>
+
+                <h2>14. Compliance</h2>
+                <p>This Privacy Policy is designed to comply with:</p>
+                <ul>
+                    <li><strong>Google Play Store Developer Program Policies</strong></li>
+                    <li><strong>Google AdMob Policies</strong></li>
+                    <li><strong>Information Technology Act, 2000</strong> (India) and its rules</li>
+                    <li><strong>General Data Protection Regulation (GDPR)</strong> principles for transparency</li>
+                </ul>
+
+                <h2>15. Contact Us</h2>
+                <p>If you have any questions, concerns, or feedback regarding this Privacy Policy or the App, please contact us:</p>
+                <ul>
+                    <li><strong>Developer:</strong> Vinkal</li>
+                    <li><strong>Email:</strong> <a href="mailto:vinkal93041@gmail.com">vinkal93041@gmail.com</a></li>
+                    <li><strong>App Name:</strong> Finance Friend</li>
+                    <li><strong>Package Name:</strong> com.vinkal.financefriend</li>
+                    <li><strong>Platform:</strong> Android (Google Play Store)</li>
+                </ul>
+
+                <div class="highlight-box" style="margin-top: 32px;">
+                    <p>📄 This Privacy Policy is effective as of <strong>May 1, 2026</strong> and applies to all users of the Finance Friend application.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 Finance Friend by Vinkal. All rights reserved.</p>
+            <ul class="footer-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="privacy.html">Privacy Policy</a></li>
+                <li><a href="terms.html">Terms of Service</a></li>
+                <li><a href="mailto:vinkal93041@gmail.com">Contact</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script>
+        const html = document.documentElement;
+        const themeToggle = document.getElementById('themeToggle');
+        function getTheme() { return localStorage.getItem('ff-theme') || 'light'; }
+        function setTheme(t) { html.setAttribute('data-theme', t); localStorage.setItem('ff-theme', t); themeToggle.textContent = t === 'dark' ? '☀️' : '🌙'; }
+        setTheme(getTheme());
+        themeToggle.addEventListener('click', () => setTheme(getTheme() === 'dark' ? 'light' : 'dark'));
+    </script>
+</body>
+
+</html>

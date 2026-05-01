@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Friend - Privacy Policy & Features | Smart Money Manager</title>
+    <meta name="description"
+        content="Finance Friend Privacy Policy, Terms of Service, and complete feature guide. Download the smart money manager app for Android.">
+    <meta name="keywords"
+        content="Finance Friend, privacy policy, expense tracker, budget planner, money manager, Android finance app, Vinkal">
+    <meta name="author" content="Vinkal">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Finance Friend - Privacy Policy & Features">
+    <meta property="og:description"
+        content="Your personal finance companion. Track expenses, manage budgets, and achieve financial freedom.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Finance Friend">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Finance Friend - Privacy Policy & Features">
+    <meta name="twitter:description" content="Smart Money Manager for Android. Track, budget, and grow your wealth.">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a7a4e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" href="Assets/favicon.ico" type="image/x-icon">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ============================================
+           DESIGN SYSTEM / CSS VARIABLES
+           ============================================ */
+        :root {
+            /* Light Mode (Default) */
+            --primary: #1a7a4e;
+            --primary-dark: #145e3c;
+            --primary-light: #22a56a;
+            --primary-glow: rgba(26, 122, 78, 0.15);
+            --accent: #10b981;
+            --accent-light: #059669;
+
+            --bg-body: #f8fafb;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f0fdf4;
+            --bg-glass: rgba(255, 255, 255, 0.85);
+            --bg-hero: linear-gradient(180deg, #eef7f2 0%, #f8fafb 100%);
+            --bg-sidebar: #ffffff;
+
+            --border-color: rgba(0, 0, 0, 0.07);
+            --border-strong: rgba(0, 0, 0, 0.12);
+
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+
+            --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+            --shadow-glow: 0 4px 24px rgba(26, 122, 78, 0.1);
+            --shadow-sidebar: 4px 0 30px rgba(0, 0, 0, 0.12);
+
+            --gradient-primary: linear-gradient(135deg, #1a7a4e, #10b981);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Dark Mode */
+        [data-theme="dark"] {
+            --bg-body: #0a0f1a;
+            --bg-card: #111827;
+            --bg-card-hover: #1a2235;
+            --bg-glass: rgba(17, 24, 39, 0.85);
+            --bg-hero: linear-gradient(180deg, #0a1628 0%, #0a0f1a 100%);
+            --bg-sidebar: #111827;
+
+            --border-color: rgba(255, 255, 255, 0.06);
+            --border-strong: rgba(255, 255, 255, 0.1);
+
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 40px rgba(26, 122, 78, 0.15);
+            --shadow-sidebar: 4px 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            transition: background var(--transition), color var(--transition);
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color var(--transition);
+        }
+
+        a:hover {
+            color: var(--primary-light);
+        }
+
+        ::selection {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-body);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-dark);
+            border-radius: 3px;
+        }
+
+        /* ============================================
+           LAYOUT
+           ============================================ */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        section {
+            padding: 80px 0;
+        }
+
+        /* ============================================
+           SIDEBAR OVERLAY
+           ============================================ */
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition);
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* ============================================
+           SIDEBAR
+           ============================================ */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 100vh;
+            background: var(--bg-sidebar);
+            z-index: 1999;
+            transform: translateX(-100%);
+            transition: transform var(--transition);
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-sidebar);
+            border-right: 1px solid var(--border-color);
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--text-primary);
+        }
+
+        .sidebar-brand .icon {
+            width: 34px;
+            height: 34px;
+            background: var(--gradient-primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .sidebar-close {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all var(--transition);
+        }
+
+        .sidebar-close:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all var(--transition);
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--bg-card-hover);
+            color: var(--primary);
+        }
+
+        .sidebar-nav a .nav-icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 12px 0;
+        }
+
+        /* Theme toggle in sidebar */
+        .theme-toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-radius: var(--radius-sm);
+        }
+
+        .theme-toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .theme-toggle-label .nav-icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            cursor: pointer;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-track {
+            position: absolute;
+            inset: 0;
+            background: #cbd5e1;
+            border-radius: 26px;
+            transition: background var(--transition);
+        }
+
+        .toggle-track::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform var(--transition);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+        }
+
+        .toggle-switch input:checked+.toggle-track {
+            background: var(--primary);
+        }
+
+        .toggle-switch input:checked+.toggle-track::after {
+            transform: translateX(22px);
+        }
+
+        .sidebar-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* ============================================
+           NAVIGATION
+           ============================================ */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 14px 0;
+            transition: all var(--transition);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: var(--bg-glass);
+        }
+
+        .navbar.scrolled {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-btn {
+            display: none;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 1.3rem;
+            transition: all var(--transition);
+        }
+
+        .menu-btn:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+        }
+
+        .nav-brand .icon {
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            padding: 8px 16px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+            background: var(--bg-card-hover);
+        }
+
+        .nav-cta {
+            padding: 10px 24px !important;
+            background: var(--gradient-primary);
+            color: #fff !important;
+            border-radius: 50px !important;
+            font-weight: 600 !important;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--primary-glow);
+            background: var(--gradient-primary) !important;
+        }
+
+        /* Desktop theme toggle */
+        .nav-theme-btn {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all var(--transition);
+        }
+
+        .nav-theme-btn:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+            border-color: var(--border-strong);
+        }
+
+        /* ============================================
+           HERO SECTION
+           ============================================ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: var(--bg-hero);
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 160px;
+            background: linear-gradient(to top, var(--bg-body), transparent);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px 6px 10px;
+            background: rgba(26, 122, 78, 0.08);
+            border: 1px solid rgba(26, 122, 78, 0.2);
+            border-radius: 50px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 28px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .hero-badge .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5.5vw, 4rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            letter-spacing: -0.03em;
+            animation: fadeInUp 0.7s ease-out;
+        }
+
+        .gradient-text {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 540px;
+            margin: 0 auto 36px;
+            line-height: 1.8;
+            animation: fadeInUp 0.8s ease-out 0.1s both;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.9s ease-out 0.2s both;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+            transition: all var(--transition);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: #fff;
+            box-shadow: 0 4px 20px var(--primary-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 40px var(--primary-glow);
+            color: #fff;
+        }
+
+        .btn-outline {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1.5px solid var(--border-strong);
+            box-shadow: var(--shadow-card);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            color: var(--text-primary);
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 56px;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat .number {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat .label {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ============================================
+           FEATURES
+           ============================================ */
+        .section-header {
+            text-align: center;
+            margin-bottom: 56px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 5px 14px;
+            background: rgba(26, 122, 78, 0.08);
+            border: 1px solid rgba(26, 122, 78, 0.15);
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 16px;
+        }
+
+        .section-header h2 {
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            max-width: 560px;
+            margin: 0 auto;
+            font-size: 1.05rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 28px;
+            transition: all var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity var(--transition);
+        }
+
+        .feature-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(26, 122, 78, 0.2);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(26, 122, 78, 0.08);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 16px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        /* ============================================
+           POLICY / TERMS SECTIONS
+           ============================================ */
+        .policy-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 48px;
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: var(--shadow-card);
+        }
+
+        .policy-content h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 32px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .policy-content h3:first-of-type {
+            margin-top: 0;
+        }
+
+        .policy-content p,
+        .policy-content li {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .policy-content ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+
+        .policy-content li {
+            margin-bottom: 6px;
+        }
+
+        .policy-content li::marker {
+            color: var(--primary);
+        }
+
+        .last-updated {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(26, 122, 78, 0.06);
+            border: 1px solid rgba(26, 122, 78, 0.1);
+            border-radius: 6px;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        /* ============================================
+           DOWNLOAD CTA
+           ============================================ */
+        .download-cta {
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-cta::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cta-card {
+            position: relative;
+            z-index: 2;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 56px 40px;
+            max-width: 680px;
+            margin: 0 auto;
+            box-shadow: var(--shadow-card);
+        }
+
+        .cta-card h2 {
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            font-weight: 800;
+            margin-bottom: 14px;
+        }
+
+        .cta-card p {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            font-size: 1.05rem;
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer {
+            padding: 40px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ============================================
+           RESPONSIVE — TABLET (<=1024px)
+           ============================================ */
+        @media (max-width: 1024px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* ============================================
+           RESPONSIVE — MOBILE (<=768px)
+           ============================================ */
+        @media (max-width: 768px) {
+            section {
+                padding: 60px 0;
+            }
+
+            .container {
+                padding: 0 16px;
+            }
+
+            /* Show hamburger, hide desktop nav items */
+            .menu-btn {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .nav-theme-btn {
+                display: none;
+            }
+
+            /* Features single column on mobile */
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .hero-stats {
+                gap: 24px;
+                flex-wrap: wrap;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+
+            .policy-content {
+                padding: 24px 18px;
+            }
+
+            .cta-card {
+                padding: 36px 20px;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        /* ============================================
+           RESPONSIVE — SMALL PHONES (<=480px)
+           ============================================ */
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 280px;
+            }
+
+            .hero h1 {
+                font-size: 1.9rem;
+            }
+
+            .hero-stats {
+                gap: 16px;
+            }
+
+            .stat .number {
+                font-size: 1.3rem;
+            }
+
+            .feature-card {
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ==================== SIDEBAR OVERLAY ==================== -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <span class="icon">💰</span>
+                Finance Friend
+            </div>
+            <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">✕</button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#features" class="sidebar-link">
+                <span class="nav-icon">✨</span>
+                Features
+            </a>
+            <a href="#privacy" class="sidebar-link">
+                <span class="nav-icon">🔒</span>
+                Privacy Policy
+            </a>
+            <a href="#terms" class="sidebar-link">
+                <span class="nav-icon">📄</span>
+                Terms of Service
+            </a>
+            <a href="#download" class="sidebar-link">
+                <span class="nav-icon">📥</span>
+                Download App
+            </a>
+            <div class="sidebar-divider"></div>
+            <div class="theme-toggle-row">
+                <div class="theme-toggle-label">
+                    <span class="nav-icon" id="themeIconSidebar">🌙</span>
+                    Dark Mode
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="themeToggleSidebar">
+                    <span class="toggle-track"></span>
+                </label>
+            </div>
+        </nav>
+        <div class="sidebar-footer">
+            © 2026 Finance Friend by Vinkal
+        </div>
+    </aside>
+
+    <!-- ==================== NAVIGATION ==================== -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-inner">
+            <div class="nav-left">
+                <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
+                <a href="#" class="nav-brand">
+                    <span class="icon">💰</span>
+                    Finance Friend
+                </a>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#privacy">Privacy Policy</a></li>
+                <li><a href="#terms">Terms</a></li>
+                <li><a href="#download" class="nav-cta">Download App</a></li>
+            </ul>
+            <button class="nav-theme-btn" id="themeToggleNav" aria-label="Toggle theme"
+                title="Toggle Dark Mode">🌙</button>
+        </div>
+    </nav>
+
+    <!-- ==================== HERO ==================== -->
+    <section class="hero" id="hero">
+        <div class="container hero-content">
+            <div class="hero-badge">
+                <span class="dot"></span>
+                Available on Google Play Store
+            </div>
+            <h1>Your Personal<br><span class="gradient-text">Finance Friend</span></h1>
+            <p>Track expenses, manage budgets, set savings goals, and achieve financial freedom with smart AI-powered
+                insights. Take control of your money today.</p>
+            <div class="hero-buttons">
+                <a href="https://play.google.com/store/apps/details?id=com.financefriend.app"
+                    class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    Download on Play Store
+                </a>
+                <a href="#features" class="btn btn-outline">Explore Features ↓</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="number">20+</div>
+                    <div class="label">Powerful Features</div>
+                </div>
+                <div class="stat">
+                    <div class="number">100%</div>
+                    <div class="label">Free to Use</div>
+                </div>
+                <div class="stat">
+                    <div class="number">🔒</div>
+                    <div class="label">Your Data is Private</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FEATURES ==================== -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">Features</span>
+                <h2>Everything You Need to Manage Money</h2>
+                <p>Finance Friend packs 20+ powerful tools into one beautifully designed app</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card reveal">
+                    <div class="feature-icon">📊</div>
+                    <h3>Smart Dashboard</h3>
+                    <p>Get a real-time overview of your finances with a fully customizable dashboard. View balances,
+                        recent transactions, and spending trends at a glance.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">💸</div>
+                    <h3>Expense & Income Tracking</h3>
+                    <p>Easily add, edit, and categorize all your transactions. Support for multiple categories, tags,
+                        notes, and recurring entries makes tracking effortless.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">📈</div>
+                    <h3>Analytics & Charts</h3>
+                    <p>Visualize your spending patterns with beautiful, interactive charts. See category breakdowns,
+                        daily/weekly/monthly trends, and income vs expense comparisons.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">💰</div>
+                    <h3>Budget Management</h3>
+                    <p>Set monthly or category-wise budgets and track progress in real time. Get notifications when
+                        you're approaching or exceeding your limits.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Savings Goals</h3>
+                    <p>Set financial goals — whether it's a vacation, emergency fund, or a new gadget. Track your
+                        progress and celebrate milestones along the way.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🏥</div>
+                    <h3>Financial Health Score</h3>
+                    <p>Get a personalized financial health score based on your spending habits, savings rate, and budget
+                        adherence. Receive actionable tips to improve it.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🔔</div>
+                    <h3>Bill Reminders</h3>
+                    <p>Never miss a payment. Set reminders for rent, utilities, subscriptions, and more. Get notified
+                        before due dates so you stay on top of every bill.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">👥</div>
+                    <h3>Split Expenses</h3>
+                    <p>Easily split bills with friends, roommates, or family. Calculate each person's share instantly
+                        and keep track of who owes what.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">📱</div>
+                    <h3>Subscription Tracker</h3>
+                    <p>Track all your recurring subscriptions — Netflix, Spotify, gym, cloud storage, and more. See
+                        total monthly cost and identify subscriptions you can cancel.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🏦</div>
+                    <h3>EMI Calculator</h3>
+                    <p>Calculate EMIs for loans instantly. Input principal, interest rate, and tenure to get exact
+                        monthly payments, total interest, and amortization details.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">💹</div>
+                    <h3>Cash Flow Analysis</h3>
+                    <p>Monitor your income vs expenses over time with detailed cash flow analysis. Understand where your
+                        money goes and identify trends to optimize spending.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🏠</div>
+                    <h3>Net Worth Tracker</h3>
+                    <p>Track your total assets and liabilities to calculate your real net worth. Add bank accounts,
+                        investments, properties, loans, and credit card balances.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🏆</div>
+                    <h3>Savings Challenges</h3>
+                    <p>Make saving fun with built-in challenges like the 52-week challenge, no-spend days, and custom
+                        goals. Stay motivated and build better financial habits.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">📋</div>
+                    <h3>Monthly Summary Reports</h3>
+                    <p>Get comprehensive monthly financial reports showing total income, expenses, savings rate, top
+                        categories, and comparison with previous months.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🏷️</div>
+                    <h3>Smart Tags</h3>
+                    <p>Intelligent tagging system that automatically categorizes your transactions. Create custom tags,
+                        filter by tags, and get insights on tagged spending patterns.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">📝</div>
+                    <h3>Transaction Templates</h3>
+                    <p>Create templates for frequently used transactions. Add recurring expenses like rent, groceries,
+                        or subscriptions with just one tap using saved templates.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">📊</div>
+                    <h3>Custom Report Builder</h3>
+                    <p>Build custom financial reports by selecting date ranges, categories, and data points. Export
+                        reports for personal records or sharing with financial advisors.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">⚙️</div>
+                    <h3>Customizable Dashboard</h3>
+                    <p>Personalize your home screen by choosing which widgets and data cards to display. Arrange them in
+                        your preferred order for the perfect financial overview.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🔒</div>
+                    <h3>App Lock & Security</h3>
+                    <p>Protect your sensitive financial data with a PIN lock. Your information stays private and secure,
+                        accessible only to you.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🌙</div>
+                    <h3>Dark Mode</h3>
+                    <p>Enjoy a beautiful dark theme that's easy on the eyes. Perfect for nighttime use and helps save
+                        battery on AMOLED screens.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== PRIVACY POLICY ==================== -->
+    <section class="policy" id="privacy">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">Legal</span>
+                <h2>Privacy Policy</h2>
+                <p>Your privacy matters to us. Read the full policy or <a href="privacy.html">view the dedicated Privacy Policy page</a>.</p>
+            </div>
+            <div class="policy-content reveal">
+                <span class="last-updated">Last Updated: May 1, 2026</span>
+                <h3>1. Introduction</h3>
+                <p>Finance Friend ("we", "our", or "us") is a personal finance management application developed by
+                    Vinkal. We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, store, and protect information when you use our mobile application ("App"), available under package name <strong>com.vinkal.financefriend</strong>.</p>
+                <h3>2. Information We Collect</h3>
+                <p>Finance Friend is designed with a <strong>privacy-first, offline-first approach</strong>.</p>
+                <p><strong>A) Data Stored Locally on Your Device:</strong></p>
+                <ul>
+                    <li><strong>Financial Data:</strong> Transaction records (income, expenses), budget settings,
+                        savings goals, bill reminders, subscription details, EMI calculations, net worth entries, and
+                        other financial data you manually enter.</li>
+                    <li><strong>Preferences:</strong> App settings, theme preferences, dashboard customization,
+                        notification preferences, and currency settings.</li>
+                    <li><strong>Security Data:</strong> Your app lock PIN (stored locally in encrypted form).</li>
+                </ul>
+                <p>All the above data is stored <strong>entirely on your device</strong>. No user accounts or login credentials are required. We do not operate any cloud servers or databases.</p>
+                <p><strong>B) Data Collected by Third-Party Services (Google AdMob):</strong></p>
+                <p>Finance Friend uses <strong>Google AdMob</strong> to display advertisements. When ads are displayed, Google AdMob may automatically collect:</p>
+                <ul>
+                    <li><strong>Device Identifiers:</strong> Advertising ID (Google Advertising ID / AAID)</li>
+                    <li><strong>IP Address:</strong> Your device's Internet Protocol address</li>
+                    <li><strong>Device Information:</strong> Device model, OS version, screen size, language settings</li>
+                    <li><strong>App Interaction Data:</strong> Ad impressions, clicks, and engagement data</li>
+                </ul>
+                <p><em>This data collection is performed by <strong>Google</strong>, not by Finance Friend directly. We do not have access to or store any of this data. See <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google's Privacy Policy</a>.</em></p>
+                <h3>3. Advertisements & Google AdMob</h3>
+                <p>Finance Friend is a <strong>free, ad-supported</strong> application. We use Google AdMob to display banner, interstitial, and rewarded ads.</p>
+                <ul>
+                    <li><strong>Personalized Ads:</strong> Google may use your Advertising ID and browsing history to show relevant ads.</li>
+                    <li><strong>Non-Personalized Ads:</strong> If you opt out of ad personalization, you will still see ads but they won't be based on your personal data.</li>
+                    <li><strong>Internet Requirement:</strong> While core App features work offline, an internet connection is needed for loading ads.</li>
+                </ul>
+                <h3>4. Third-Party Services</h3>
+                <p>Finance Friend integrates the following third-party service:</p>
+                <ul>
+                    <li><strong>Google AdMob</strong> (by Google LLC) — for displaying advertisements. Privacy Policy: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">policies.google.com/privacy</a></li>
+                    <li><strong>Google Play Services</strong> (by Google LLC) — for app distribution & updates.</li>
+                </ul>
+                <p>We do not use any analytics tools (Google Analytics, Firebase Analytics, etc.) to track usage behavior.</p>
+                <h3>5. Data We Do NOT Collect</h3>
+                <ul>
+                    <li>We do <strong>NOT</strong> collect your name, email, phone number, or personal identification through the App.</li>
+                    <li>We do <strong>NOT</strong> access your contacts, camera, microphone, or GPS location.</li>
+                    <li>We do <strong>NOT</strong> sell, rent, or share your locally stored data with third parties.</li>
+                    <li>We do <strong>NOT</strong> track your usage behavior or create user profiles.</li>
+                </ul>
+                <h3>6. Data Export & Backup</h3>
+                <p>Finance Friend allows you to export your financial data. Exported files are saved directly to your device. No data is uploaded to any server during export.</p>
+                <h3>7. Local Notifications</h3>
+                <p>Notifications for bill reminders and budget alerts are generated entirely on your device without any server communication.</p>
+                <h3>8. Your Rights & Choices</h3>
+                <ul>
+                    <li><strong>Delete Data:</strong> Use "Clear All Data" in Settings, clear App data via device settings, or uninstall the App.</li>
+                    <li><strong>Reset Advertising ID:</strong> Settings → Google → Ads → Reset Advertising ID.</li>
+                    <li><strong>Opt-Out of Personalized Ads:</strong> Settings → Google → Ads → Opt out of Ads Personalization.</li>
+                </ul>
+                <h3>9. Children's Privacy</h3>
+                <p>Finance Friend is not directed at children under 13. We do not knowingly collect personal information from children. Ads displayed are configured for general audiences.</p>
+                <h3>10. Security</h3>
+                <ul>
+                    <li>Optional PIN lock to prevent unauthorized access.</li>
+                    <li>All personal financial data stays on your device.</li>
+                    <li>No cloud storage means no risk of server-side data breaches.</li>
+                </ul>
+                <h3>11. Changes to This Policy</h3>
+                <p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated date. Continued use of the App constitutes acceptance.</p>
+                <h3>12. Contact Us</h3>
+                <ul>
+                    <li><strong>Developer:</strong> Vinkal</li>
+                    <li><strong>Email:</strong> <a href="mailto:vinkal93041@gmail.com">vinkal93041@gmail.com</a></li>
+                    <li><strong>Package:</strong> com.vinkal.financefriend</li>
+                </ul>
+                <p style="margin-top:20px;"><a href="privacy.html" style="font-weight:600;">📄 View Full Privacy Policy →</a></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== TERMS OF SERVICE ==================== -->
+    <section class="terms" id="terms">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">Legal</span>
+                <h2>Terms of Service</h2>
+                <p>Please read these terms carefully before using Finance Friend.</p>
+            </div>
+            <div class="policy-content reveal">
+                <span class="last-updated">Last Updated: May 1, 2026</span>
+                <h3>1. Acceptance of Terms</h3>
+                <p>By downloading, installing, or using Finance Friend ("the App"), you agree to be bound by these Terms
+                    of Service. If you do not agree to these terms, please do not use the App.</p>
+                <h3>2. Description of Service</h3>
+                <p>Finance Friend is a <strong>free, ad-supported</strong> personal finance management application that helps users track expenses, manage
+                    budgets, set savings goals, and gain insights into their financial habits. The App is supported by advertisements served through Google AdMob.</p>
+                <h3>3. User Responsibilities</h3>
+                <ul>
+                    <li>You are responsible for the accuracy of the financial data you enter into the App.</li>
+                    <li>You are responsible for maintaining the security of your device and the App's PIN lock.</li>
+                    <li>You should regularly back up your data using the App's export features.</li>
+                    <li>You must not use the App for any illegal or unauthorized purpose.</li>
+                </ul>
+                <h3>4. Disclaimer of Warranties</h3>
+                <p>Finance Friend is provided "as is" and "as available" without warranties of any kind, either express
+                    or implied. We do not guarantee that the App will be error-free, uninterrupted, or meet your
+                    specific requirements. The App is not a substitute for professional financial advice.</p>
+                <h3>5. Limitation of Liability</h3>
+                <p>To the fullest extent permitted by law, Vinkal (the developer) shall not be liable for any indirect,
+                    incidental, special, consequential, or punitive damages resulting from your use of the App. This
+                    includes, but is not limited to, loss of data, financial losses, or any damages arising from
+                    reliance on information provided by the App.</p>
+                <h3>6. Financial Disclaimer</h3>
+                <p>Finance Friend provides tools for personal financial tracking and analysis only. The App does not
+                    provide financial advice, investment recommendations, or tax guidance. Always consult a qualified
+                    financial advisor for professional financial decisions.</p>
+                <h3>7. Intellectual Property</h3>
+                <p>All content, design, code, graphics, and trademarks in Finance Friend are the intellectual property
+                    of Vinkal. You may not copy, modify, distribute, or reverse-engineer any part of the App without
+                    prior written consent.</p>
+                <h3>8. Advertisements</h3>
+                <p>Finance Friend displays advertisements through Google AdMob. By using the App, you acknowledge that ads will be displayed, an internet connection may be required for loading ads, and ad content is provided by third-party advertisers. We are not responsible for products or services offered through advertisements.</p>
+                <h3>9. Updates & Changes</h3>
+                <p>We reserve the right to update, modify, or discontinue any features of the App at any time. We may
+                    also update these Terms of Service, and continued use after changes constitutes acceptance.</p>
+                <h3>10. Governing Law</h3>
+                <p>These Terms of Service shall be governed by and construed in accordance with the laws of India. Any
+                    disputes arising from these terms shall be resolved in the courts of India.</p>
+                <h3>11. Contact</h3>
+                <p>For any questions about these Terms of Service, please contact:</p>
+                <ul>
+                    <li><strong>Developer:</strong> Vinkal</li>
+                    <li><strong>Email:</strong> <a href="mailto:vinkal93041@gmail.com">vinkal93041@gmail.com</a></li>
+                </ul>
+                <p style="margin-top:20px;"><a href="terms.html" style="font-weight:600;">📄 View Full Terms of Service →</a></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== DOWNLOAD CTA ==================== -->
+    <section class="download-cta" id="download">
+        <div class="container">
+            <div class="cta-card reveal">
+                <h2>Ready to Take Control of<br>Your <span class="gradient-text">Finances</span>?</h2>
+                <p>Download Finance Friend today and start your journey to financial freedom. It's free, private, and
+                    powerful.</p>
+                <a href="https://play.google.com/store/apps/details?id=com.financefriend.app"
+                    class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    Download on Google Play
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
+        <div class="container footer-inner">
+            <p class="footer-text">© 2026 Finance Friend by Vinkal. All rights reserved.</p>
+            <ul class="footer-links">
+                <li><a href="privacy.html">Privacy Policy</a></li>
+                <li><a href="terms.html">Terms of Service</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="mailto:vinkal93041@gmail.com">Contact</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        // --- Elements ---
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const navbar = document.getElementById('navbar');
+        const themeToggleNav = document.getElementById('themeToggleNav');
+        const themeToggleSidebar = document.getElementById('themeToggleSidebar');
+        const themeIconSidebar = document.getElementById('themeIconSidebar');
+        const html = document.documentElement;
+
+        // --- Sidebar Open/Close ---
+        function openSidebar() {
+            sidebar.classList.add('open');
+            sidebarOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        menuBtn.addEventListener('click', openSidebar);
+        sidebarClose.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // Close sidebar on link click
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', closeSidebar);
+        });
+
+        // --- Theme Toggle ---
+        function getTheme() {
+            return localStorage.getItem('ff-theme') || 'light';
+        }
+
+        function setTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem('ff-theme', theme);
+            updateThemeIcons(theme);
+        }
+
+        function updateThemeIcons(theme) {
+            const isDark = theme === 'dark';
+            themeToggleNav.textContent = isDark ? '☀️' : '🌙';
+            themeIconSidebar.textContent = isDark ? '☀️' : '🌙';
+            themeToggleSidebar.checked = isDark;
+        }
+
+        // Initialize theme
+        const savedTheme = getTheme();
+        setTheme(savedTheme);
+
+        // Nav theme button
+        themeToggleNav.addEventListener('click', () => {
+            const newTheme = getTheme() === 'dark' ? 'light' : 'dark';
+            setTheme(newTheme);
+        });
+
+        // Sidebar toggle switch
+        themeToggleSidebar.addEventListener('change', () => {
+            const newTheme = themeToggleSidebar.checked ? 'dark' : 'light';
+            setTheme(newTheme);
+        });
+
+        // --- Navbar Scroll Effect ---
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 60);
+        });
+
+        // --- Scroll Reveal Animation ---
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const delay = entry.target.closest('.features-grid')
+                        ? Array.from(entry.target.parentElement.children).indexOf(entry.target) * 60
+                        : 0;
+                    setTimeout(() => entry.target.classList.add('visible'), delay);
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // --- Smooth Scroll ---
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const top = target.getBoundingClientRect().top + window.pageYOffset - 80;
+                    window.scrollTo({ top, behavior: 'smooth' });
+                }
+            });
+        });
+
+        // --- Active nav highlight ---
+        const sections = document.querySelectorAll('section[id]');
+        window.addEventListener('scroll', () => {
+            const scrollY = window.pageYOffset + 120;
+            sections.forEach(section => {
+                const top = section.offsetTop;
+                const height = section.offsetHeight;
+                const id = section.getAttribute('id');
+                const link = document.querySelector(`.nav-links a[href="#${id}"]`);
+                if (link) {
+                    if (scrollY >= top && scrollY < top + height) {
+                        link.style.color = 'var(--primary)';
+                        link.style.background = 'rgba(26, 122, 78, 0.06)';
+                    } else {
+                        link.style.color = '';
+                        link.style.background = '';
+                    }
+                }
+            });
+        });
+
+        // --- Close sidebar on ESC key ---
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeSidebar();
+        });
+
+        // --- PWA Service Worker Registration ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW registered:', reg.scope))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+
+        // --- PWA Install Prompt ---
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Show install banner after 3 seconds
+            setTimeout(() => {
+                if (deferredPrompt) {
+                    const banner = document.createElement('div');
+                    banner.id = 'pwa-banner';
+                    banner.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;padding:16px 24px;display:flex;align-items:center;gap:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);z-index:9999;max-width:420px;width:90%;';
+                    banner.innerHTML = '<div style="flex:1"><strong style="font-size:0.95rem">Install Finance Friend</strong><p style="font-size:0.8rem;color:var(--text-secondary);margin-top:4px">Add to home screen for quick access</p></div><button id="pwa-install" style="padding:10px 20px;background:var(--gradient-primary);color:#fff;border:none;border-radius:50px;font-weight:600;font-size:0.85rem;cursor:pointer;font-family:inherit">Install</button><button id="pwa-close" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.2rem;padding:4px">✕</button>';
+                    document.body.appendChild(banner);
+                    document.getElementById('pwa-install').addEventListener('click', async () => {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        deferredPrompt = null;
+                        banner.remove();
+                    });
+                    document.getElementById('pwa-close').addEventListener('click', () => banner.remove());
+                }
+            }, 3000);
+        });
+    </script>
+</body>
+
+</html>

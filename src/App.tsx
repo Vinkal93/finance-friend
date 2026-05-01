@@ -2,7 +2,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { App as CapApp } from "@capacitor/app";
+import { Capacitor } from "@capacitor/core";
 import { FinanceProvider, useFinance } from "@/context/FinanceContext";
 import BottomNav from "@/components/BottomNav";
 import AppLock from "@/components/AppLock";
@@ -44,6 +47,7 @@ function AppContent() {
 
   return (
     <BrowserRouter>
+      <BackButtonHandler />
       <div className="min-h-screen bg-background max-w-lg mx-auto relative safe-top">
         <Routes>
           <Route path="/" element={<Dashboard />} />
@@ -76,6 +80,32 @@ function AppContent() {
       </div>
     </BrowserRouter>
   );
+}
+
+function BackButtonHandler() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+
+    const handler = CapApp.addListener('backButton', ({ canGoBack }) => {
+      // If on home page, minimize app instead of closing
+      if (location.pathname === '/') {
+        CapApp.minimizeApp();
+      } else if (canGoBack) {
+        navigate(-1);
+      } else {
+        CapApp.minimizeApp();
+      }
+    });
+
+    return () => {
+      handler.then(h => h.remove());
+    };
+  }, [navigate, location.pathname]);
+
+  return null;
 }
 
 const App = () => (

@@ -1,73 +1,64 @@
-# Welcome to your Lovable project
+# Finance Friend - Smart Money Manager 💰
 
-## Project info
+Your personal finance companion that helps you track expenses, manage budgets, set savings goals, and achieve financial freedom with smart insights.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+**Package:** `com.vinkal.financefriend`  
+**Developer:** Vinkal  
+**Platform:** Android (Capacitor)
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- 📊 **Dashboard** — Real-time overview of your finances
+- 💸 **Expense & Income Tracking** — Add, edit, and categorize transactions
+- 📈 **Analytics & Charts** — Visualize spending patterns with interactive charts
+- 💰 **Budget Management** — Set and track monthly budgets by category
+- 🎯 **Savings Goals** — Set financial goals and track progress
+- 🏥 **Financial Health Score** — Get a score and tips to improve your finances
+- 🔔 **Bill Reminders** — Never miss a payment deadline
+- 👥 **Split Expenses** — Easily split bills with friends and family
+- 📱 **Subscription Tracker** — Track and manage recurring subscriptions
+- 🏦 **EMI Calculator** — Calculate loan EMIs instantly
+- 💹 **Cash Flow Analysis** — Monitor income vs expenses over time
+- 🏠 **Net Worth Tracker** — Track your assets and liabilities
+- 🏆 **Savings Challenges** — Fun challenges to boost your savings
+- 📋 **Monthly Summary** — Detailed monthly financial reports
+- 🏷️ **Smart Tags** — Intelligent transaction categorization
+- 📝 **Transaction Templates** — Quick-add frequently used transactions
+- 📊 **Report Builder** — Generate custom financial reports
+- ⚙️ **Customizable Dashboard** — Personalize your home screen widgets
+- 🔒 **App Lock** — Secure your financial data with a PIN
+- 🌙 **Dark Mode** — Easy on the eyes at night
 
-**Use Lovable**
+## Tech Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+- **Frontend:** React 18 + TypeScript
+- **Styling:** Tailwind CSS + shadcn/ui
+- **Build Tool:** Vite
+- **Mobile:** Capacitor (Android)
+- **Charts:** Recharts
+- **Animations:** Framer Motion
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+## Getting Started
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Install dependencies
+npm install
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
+
+# Build for production
+npm run build
+
+# Sync and open in Android Studio
+npx cap sync
+npx cap open android
 ```
 
-**Edit a file directly in GitHub**
+## Privacy Policy
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+See the [Privacy Policy](./Policy/index.html) for details on data handling and user privacy.
 
-**Use GitHub Codespaces**
+## License
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+© 2026 Vinkal. All rights reserved.

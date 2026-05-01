@@ -1,0 +1,21 @@
+{
+  "name": "Finance Friend - Smart Money Manager",
+  "short_name": "Finance Friend",
+  "description": "Track expenses, manage budgets, set savings goals & achieve financial freedom.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a0f1a",
+  "theme_color": "#1a7a4e",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "Assets/finance-friend-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "productivity"],
+  "lang": "en",
+  "dir": "ltr"
+}

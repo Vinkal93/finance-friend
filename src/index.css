@@ -161,6 +161,11 @@
   }
 }
 
+/* Ensure content doesn't hide behind fixed BottomNav + system nav bar on Android */
+body {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
 /* Glass theme card effects */
 .glass .bg-card {
   backdrop-filter: blur(16px) saturate(180%);
