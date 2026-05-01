@@ -3,10 +3,11 @@ import { useFinance } from '@/context/FinanceContext';
 import { EXPENSE_ICONS, INCOME_ICONS, PAYMENT_MODES, EMOJI_PICKER } from '@/types/finance';
 import { motion } from 'framer-motion';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Check, Sparkles } from 'lucide-react';
+import { ArrowLeft, Check, Sparkles, Wand2, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import type { SmartTag } from '@/pages/SmartTagsPage';
+import { detectAnomaly } from '@/lib/anomaly';
 
 const EXPENSE_CATS = ['Food', 'Travel', 'Rent', 'Bills', 'Shopping', 'Health', 'Entertainment', 'Education', 'Custom'];
 const INCOME_CATS = ['Salary', 'Freelance', 'Business', 'Investment', 'Other'];
