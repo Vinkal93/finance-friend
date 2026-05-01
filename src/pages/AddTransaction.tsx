@@ -231,8 +231,15 @@ export default function AddTransaction() {
       {/* Note, Date, Recurring */}
       <div className="space-y-4 mb-8">
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Note</label>
-          <input type="text" value={note} onChange={e => setNote(e.target.value)} placeholder="What was this for?"
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="text-xs font-medium text-muted-foreground">Note</label>
+            <button type="button" onClick={aiCategorize} disabled={aiLoading || !note.trim()}
+              className="flex items-center gap-1 text-[10px] font-bold text-primary disabled:opacity-40">
+              {aiLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
+              AI auto-categorize
+            </button>
+          </div>
+          <input type="text" value={note} onChange={e => setNote(e.target.value)} placeholder="What was this for? (e.g. Zomato dinner)"
             className="w-full bg-card border border-border rounded-xl py-3 px-4 text-sm card-shadow focus:outline-none focus:ring-2 focus:ring-primary/30" />
 
           {/* Smart tag auto-suggest */}
