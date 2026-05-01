@@ -116,8 +116,17 @@ export default function AddTransaction() {
       updateTransaction(editId, data);
       toast.success('Transaction updated!');
     } else {
+      const anomaly = detectAnomaly(
+        { amount: parseFloat(amount), category: finalCategory, type },
+        transactions
+      );
       addTransaction(data);
       toast.success(`${type === 'income' ? 'Income' : 'Expense'} added!`);
+      if (anomaly.isAnomaly) {
+        setTimeout(() => {
+          toast.warning(`⚠️ Unusual spend: ${anomaly.reason}`, { duration: 6000 });
+        }, 400);
+      }
     }
     navigate('/');
   };
