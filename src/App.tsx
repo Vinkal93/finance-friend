@@ -34,6 +34,14 @@ import DashboardCustomizePage from "./pages/DashboardCustomizePage";
 import AIAssistantPage from "./pages/AIAssistantPage";
 import PredictiveAnalyticsPage from "./pages/PredictiveAnalyticsPage";
 import QuickAddSettingsPage from "./pages/QuickAddSettingsPage";
+import AboutPage from "./pages/AboutPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsPage from "./pages/TermsPage";
+import PersonalizationPage from "./pages/PersonalizationPage";
+import QuickBundlesPage from "./pages/QuickBundlesPage";
+import ForecastCalendarPage from "./pages/ForecastCalendarPage";
+import { initializeAds, onAppOpen } from "./lib/ads";
+import { startAutoSync } from "./lib/syncQueue";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -73,6 +81,12 @@ function AppContent() {
           <Route path="/ai-assistant" element={<AIAssistantPage />} />
           <Route path="/forecast" element={<PredictiveAnalyticsPage />} />
           <Route path="/quick-add-settings" element={<QuickAddSettingsPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/personalization" element={<PersonalizationPage />} />
+          <Route path="/bundles" element={<QuickBundlesPage />} />
+          <Route path="/forecast-calendar" element={<ForecastCalendarPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <QuickAddFAB />
@@ -108,18 +122,25 @@ function BackButtonHandler() {
   return null;
 }
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <FinanceProvider>
-        <Toaster />
-        <Sonner />
-        <AppLock>
-          <AppContent />
-        </AppLock>
-      </FinanceProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  useEffect(() => {
+    initializeAds();
+    onAppOpen();
+    startAutoSync();
+  }, []);
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <FinanceProvider>
+          <Toaster />
+          <Sonner />
+          <AppLock>
+            <AppContent />
+          </AppLock>
+        </FinanceProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
