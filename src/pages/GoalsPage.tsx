@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Target, X, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import ConfirmDialog from '@/components/ConfirmDialog';
+import { onGoalCreated } from '@/lib/ads';
 
 export default function GoalsPage() {
   const { goals, currency, addGoal, updateGoal, deleteGoal } = useFinance();
@@ -33,6 +34,8 @@ export default function GoalsPage() {
     } else {
       addGoal({ name, icon, targetAmount: Number(target), savedAmount: Number(saved) || 0, deadline });
       toast.success('Goal created! 🎯');
+      // Trigger interstitial after every 2nd goal (handled inside ads.ts)
+      setTimeout(() => { onGoalCreated(); }, 800);
     }
     resetForm();
   };

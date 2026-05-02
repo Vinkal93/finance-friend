@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Plus, Trash2, Pencil, Check, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +14,11 @@ export default function QuickAddSettingsPage() {
   const navigate = useNavigate();
   const { currency } = useFinance();
   const [items, setItems] = useLocalStorage<QuickItem[]>('finance-quick-items', DEFAULT_QUICK_ITEMS);
+
+  // Notify QuickAddFAB when items change so it picks up updates immediately
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('quick-items-changed'));
+  }, [items]);
 
   const [newLabel, setNewLabel] = useState('');
   const [newAmount, setNewAmount] = useState('');

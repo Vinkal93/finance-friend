@@ -1,56 +1,68 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { RefreshCw } from 'lucide-react';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 
 interface Props {
   onRefresh: () => Promise<void> | void;
   children: React.ReactNode;
 }
 
+const TRIGGER = 110; // increased from 60 — needs longer pull
+const MAX_PULL = 160;
+
 export default function PullToRefresh({ onRefresh, children }: Props) {
-  const [pulling, setPulling] = useState(false);
+  const [enabled] = useLocalStorage<boolean>('finance-ptr-enabled', true);
   const [refreshing, setRefreshing] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
   const startY = useRef(0);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const pulling = useRef(false);
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    if (containerRef.current && containerRef.current.scrollTop === 0) {
-      startY.current = e.touches[0].clientY;
-      setPulling(true);
-    }
+    if (!enabled) return;
+    if (window.scrollY > 5) return;
+    startY.current = e.touches[0].clientY;
+    pulling.current = true;
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!pulling) return;
-    const diff = Math.max(0, Math.min(80, e.touches[0].clientY - startY.current));
-    setPullDistance(diff);
+    if (!pulling.current || !enabled) return;
+    const diff = e.touches[0].clientY - startY.current;
+    if (diff <= 0) { setPullDistance(0); return; }
+    // Resistance curve — feels heavier as you pull more
+    const resisted = Math.min(MAX_PULL, diff * 0.55);
+    setPullDistance(resisted);
   };
 
   const handleTouchEnd = async () => {
-    if (pullDistance > 60) {
+    if (!pulling.current) return;
+    pulling.current = false;
+    if (pullDistance >= TRIGGER && !refreshing) {
       setRefreshing(true);
-      await onRefresh();
-      setRefreshing(false);
+      try { await onRefresh(); } finally { setRefreshing(false); }
     }
     setPullDistance(0);
-    setPulling(false);
   };
 
+  if (!enabled) return <>{children}</>;
+
+  const progress = Math.min(1, pullDistance / TRIGGER);
+
   return (
-    <div
-      ref={containerRef}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
-      {pullDistance > 0 && (
+    <div onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
+      {(pullDistance > 0 || refreshing) && (
         <motion.div
-          className="flex justify-center py-2"
-          animate={{ height: pullDistance, opacity: pullDistance / 60 }}
+          className="flex items-center justify-center overflow-hidden"
+          animate={{ height: refreshing ? 50 : pullDistance }}
+          transition={{ duration: refreshing ? 0.2 : 0 }}
         >
-          <RefreshCw className={`w-5 h-5 text-primary ${refreshing ? 'animate-spin' : ''}`}
-            style={{ transform: `rotate(${pullDistance * 4}deg)` }} />
+          <RefreshCw
+            className={`w-5 h-5 text-primary ${refreshing ? 'animate-spin' : ''}`}
+            style={{
+              transform: refreshing ? 'none' : `rotate(${progress * 360}deg)`,
+              opacity: refreshing ? 1 : progress,
+            }}
+          />
         </motion.div>
       )}
       {children}

@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, X, Settings as SettingsIcon } from 'lucide-react';
 import { useFinance } from '@/context/FinanceContext';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,11 +22,38 @@ export const DEFAULT_QUICK_ITEMS: QuickItem[] = [
   { id: '6', emoji: '💊', label: 'Medicine', amount: 200, category: 'Health' },
 ];
 
+const STORAGE_KEY = 'finance-quick-items';
+
+function readItems(): QuickItem[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return DEFAULT_QUICK_ITEMS;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : DEFAULT_QUICK_ITEMS;
+  } catch { return DEFAULT_QUICK_ITEMS; }
+}
+
 export default function QuickAddFAB() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const { addTransaction, currency } = useFinance();
-  const [items] = useLocalStorage<QuickItem[]>('finance-quick-items', DEFAULT_QUICK_ITEMS);
+  // Read fresh from localStorage every time menu opens (fix sync bug)
+  const [items, setItems] = useState<QuickItem[]>(() => readItems());
+
+  // Refresh when menu opens, when storage changes (other tab), or custom event
+  useEffect(() => {
+    if (open) setItems(readItems());
+  }, [open]);
+
+  useEffect(() => {
+    const reload = () => setItems(readItems());
+    window.addEventListener('storage', reload);
+    window.addEventListener('quick-items-changed', reload);
+    return () => {
+      window.removeEventListener('storage', reload);
+      window.removeEventListener('quick-items-changed', reload);
+    };
+  }, []);
 
   const quickAdd = (item: QuickItem) => {
     addTransaction({
@@ -81,7 +107,6 @@ export default function QuickAddFAB() {
         )}
       </AnimatePresence>
 
-      {/* FAB positioned above bottom nav (nav ~70px + safe area) */}
       <button onClick={() => setOpen(!open)}
         className="fixed right-4 z-[60] w-12 h-12 rounded-full gradient-accent fab-shadow flex items-center justify-center text-primary-foreground active:scale-90 transition-transform"
         style={{ bottom: 'calc(5.5rem + env(safe-area-inset-bottom, 0px))' }}>

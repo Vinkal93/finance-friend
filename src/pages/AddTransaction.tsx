@@ -8,6 +8,8 @@ import { toast } from 'sonner';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import type { SmartTag } from '@/pages/SmartTagsPage';
 import { detectAnomaly } from '@/lib/anomaly';
+import { categorizeOnDevice } from '@/lib/categorize';
+import { queueOp } from '@/lib/syncQueue';
 
 const EXPENSE_CATS = ['Food', 'Travel', 'Rent', 'Bills', 'Shopping', 'Health', 'Entertainment', 'Education', 'Custom'];
 const INCOME_CATS = ['Salary', 'Freelance', 'Business', 'Investment', 'Other'];
@@ -35,35 +37,56 @@ export default function AddTransaction() {
   const aiCategorize = async () => {
     if (!note.trim()) { toast.error('Note dalo pehle (e.g. "Zomato dinner")'); return; }
     setAiLoading(true);
+    const history = transactions.slice(0, 50);
+
+    // If offline, use on-device fallback immediately and queue the AI request
+    if (!navigator.onLine) {
+      const local = categorizeOnDevice(note, type, history);
+      if (local.category) {
+        setCategory(local.category);
+        toast.success(`📱 Offline (${local.source}): ${local.category}`);
+      }
+      queueOp({ kind: 'ai-categorize', payload: { note, amount, type }, localId: crypto.randomUUID() });
+      setAiLoading(false);
+      return;
+    }
+
     try {
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-categorize`;
-      const history = transactions.slice(0, 50).map(t => ({ note: t.note, category: t.category, type: t.type }));
+      const histPayload = history.map(t => ({ note: t.note, category: t.category, type: t.type }));
       const resp = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ note, amount: Number(amount) || 0, type, history }),
+        body: JSON.stringify({ note, amount: Number(amount) || 0, type, history: histPayload }),
       });
       if (!resp.ok) {
-        if (resp.status === 429) toast.error('AI rate limit, thodi der baad');
-        else if (resp.status === 402) toast.error('AI credits khatam');
-        else toast.error('AI failed');
+        // AI failed → on-device fallback
+        const local = categorizeOnDevice(note, type, history);
+        if (local.category && local.confidence > 0) {
+          setCategory(local.category);
+          toast.success(`✨ Offline fallback: ${local.category}`);
+        } else {
+          toast.error(resp.status === 429 ? 'Rate limit' : resp.status === 402 ? 'AI credits khatam' : 'AI failed');
+        }
         return;
       }
       const data = await resp.json();
-      if (data.category && allCats.includes(data.category)) {
+      if (data.category) {
         setCategory(data.category);
         toast.success(`✨ Auto-set: ${data.category}${data.confidence ? ` (${Math.round(data.confidence * 100)}%)` : ''}`);
-      } else if (data.category) {
-        // Fall back to "Other" or closest
-        setCategory(data.category);
-        toast.success(`✨ ${data.category}`);
       }
     } catch (e) {
       console.error(e);
-      toast.error('AI error');
+      const local = categorizeOnDevice(note, type, history);
+      if (local.category && local.confidence > 0) {
+        setCategory(local.category);
+        toast.success(`📱 Offline: ${local.category}`);
+      } else {
+        toast.error('AI error');
+      }
     } finally {
       setAiLoading(false);
     }
