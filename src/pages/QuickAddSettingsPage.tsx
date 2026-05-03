@@ -52,8 +52,10 @@ export default function QuickAddSettingsPage() {
 
   const removeItem = (id: string) => {
     setItems(items.filter(i => i.id !== id));
+    setDeleteId(null);
     toast.success('Removed');
   };
+  const deleting = items.find(i => i.id === deleteId);
 
   const move = (idx: number, dir: -1 | 1) => {
     const newIdx = idx + dir;
