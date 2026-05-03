@@ -271,12 +271,16 @@ ${analytics.anomalies.length > 0 ? `<h2>⚠️ Unusual Spending Alerts</h2>
           </div>
           <div className="space-y-2">
             {analytics.anomalies.map(a => (
-              <div key={a.category} className="bg-card rounded-lg p-3 text-xs">
-                <p className="font-bold mb-1">{a.category} <span className="text-expense">({Math.round(a.ratio * 100)}% of normal)</span></p>
+              <button key={a.category} onClick={() => setSelectedAnomaly(a)}
+                className="w-full text-left bg-card rounded-lg p-3 text-xs active:scale-[0.98] transition-transform hover:bg-secondary">
+                <p className="font-bold mb-1 flex items-center justify-between">
+                  <span>{a.category} <span className="text-expense">({Math.round(a.ratio * 100)}% of normal)</span></span>
+                  <span className="text-primary text-[10px] font-semibold">View ›</span>
+                </p>
                 <p className="text-muted-foreground">
                   This month: <b>{currency}{Math.round(a.current).toLocaleString()}</b> vs avg {currency}{Math.round(a.avg).toLocaleString()}
                 </p>
-              </div>
+              </button>
             ))}
           </div>
         </motion.div>
@@ -288,6 +292,12 @@ ${analytics.anomalies.length > 0 ? `<h2>⚠️ Unusual Spending Alerts</h2>
           <p className="text-xs text-muted-foreground">Add transactions across multiple months to unlock predictive insights</p>
         </div>
       )}
+
+      <AnomalyDrawer
+        open={!!selectedAnomaly}
+        anomaly={selectedAnomaly}
+        onClose={() => setSelectedAnomaly(null)}
+      />
     </div>
   );
 }
