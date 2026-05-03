@@ -139,6 +139,13 @@ export default function AIAssistantPage() {
 
   const send = async (text: string) => {
     if (!text.trim() || loading) return;
+    const u = getAIUsage();
+    if (!u.canQuery) {
+      setShowUnlock(true);
+      return;
+    }
+    consumeAIQuery();
+    refreshUsage();
     const conv = ensureActive();
     const userMsg: Msg = { role: 'user', content: text };
     const newMessages = [...conv.messages, userMsg];
