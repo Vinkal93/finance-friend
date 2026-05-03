@@ -2,10 +2,11 @@ import { useState, useRef, useEffect } from 'react';
 import { useFinance } from '@/context/FinanceContext';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Send, Sparkles, Loader2, History, Plus, Trash2, X } from 'lucide-react';
+import { ArrowLeft, Send, Sparkles, Loader2, History, Plus, Trash2, X, Lock, Play } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { toast } from 'sonner';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { getAIUsage, consumeAIQuery, unlockAIWithAd, type AIUsageInfo } from '@/lib/ads';
 
 interface Msg {
   role: 'user' | 'assistant';
