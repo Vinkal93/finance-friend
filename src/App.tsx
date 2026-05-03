@@ -55,6 +55,7 @@ function AppContent() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <BackButtonHandler />
       <div className="min-h-screen bg-background max-w-lg mx-auto relative safe-top">
         <Routes>
