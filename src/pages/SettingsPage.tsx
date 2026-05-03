@@ -249,8 +249,32 @@ export default function SettingsPage() {
         </button>
       </motion.div>
 
+      {/* More */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }} className="bg-card rounded-2xl card-shadow mb-4 overflow-hidden">
+        {[
+          { to: '/personalization', icon: Sparkles, label: 'Personalization', desc: 'Theme, accent, font, pull-to-refresh' },
+          { to: '/bundles', icon: Package, label: 'Quick Bundles', desc: 'Save & apply transaction sets' },
+          { to: '/forecast-calendar', icon: CalendarDays, label: 'Forecast Calendar', desc: 'Visual spending projection + PDF' },
+          { to: '/about', icon: Info, label: 'About this App', desc: 'Features & how it works' },
+          { to: '/privacy', icon: ShieldCheck, label: 'Privacy Policy', desc: 'How your data is handled' },
+          { to: '/terms', icon: FileText, label: 'Terms of Use', desc: 'Conditions & disclaimers' },
+        ].map((it, i, arr) => (
+          <button key={it.to} onClick={() => navigate(it.to)}
+            className={`w-full flex items-center gap-3 p-4 text-left active:bg-secondary transition-colors ${i < arr.length - 1 ? 'border-b border-border' : ''}`}>
+            <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+              <it.icon className="w-4 h-4 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold">{it.label}</p>
+              <p className="text-[11px] text-muted-foreground truncate">{it.desc}</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+          </button>
+        ))}
+      </motion.div>
+
       {/* Export */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }} className="bg-card rounded-2xl p-5 card-shadow mb-4">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.19 }} className="bg-card rounded-2xl p-5 card-shadow mb-4">
         <button onClick={() => setShowExportConfirm(true)} className="w-full flex items-center gap-3">
           <Download className="w-5 h-5 text-primary" />
           <div className="text-left">
