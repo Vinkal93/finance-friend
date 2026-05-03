@@ -7,6 +7,7 @@ import { DEFAULT_QUICK_ITEMS, type QuickItem } from '@/components/QuickAddFAB';
 import { useFinance } from '@/context/FinanceContext';
 import { EMOJI_PICKER } from '@/types/finance';
 import { toast } from 'sonner';
+import ConfirmDialog from '@/components/ConfirmDialog';
 
 const CATEGORIES = ['Food', 'Travel', 'Bills', 'Shopping', 'Health', 'Entertainment', 'Education', 'Rent', 'Other'];
 
