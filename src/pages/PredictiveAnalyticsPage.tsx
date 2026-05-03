@@ -63,6 +63,7 @@ export default function PredictiveAnalyticsPage() {
     });
     const anomalies: { category: string; current: number; avg: number; ratio: number }[] = [];
     Object.entries(currentByCat).forEach(([cat, current]) => {
+      if (isMarkedNormal(cat, currentMonth)) return;
       const hist = histByCat[cat] || [];
       const avg = hist.length > 0 ? hist.reduce((a, b) => a + b, 0) / Math.max(sortedMonths.length - 1, 1) : 0;
       if (avg > 0 && current > avg * 1.5) {
