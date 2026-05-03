@@ -94,7 +94,7 @@ export default function PredictiveAnalyticsPage() {
     chartData.push({ month: 'Next', expense: Math.round(nextMonthPredicted) });
 
     return { avgMonthly, nextMonthPredicted, projection, anomalies, budgetForecasts, chartData, monthlySaving };
-  }, [transactions, monthlyIncome, budgets]);
+  }, [transactions, monthlyIncome, budgets, normalizedTick]);
 
   const exportCSV = () => {
     const lines: string[] = [];
