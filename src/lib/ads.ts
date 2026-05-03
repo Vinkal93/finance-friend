@@ -301,7 +301,7 @@ export async function unlockAIWithAd(): Promise<boolean> {
   try { data = JSON.parse(localStorage.getItem(STORAGE.aiUsage) || '{}'); }
   catch { data = { date: today, used: 0, bonus: 0 }; }
   if (data.date !== today) data = { date: today, used: 0, bonus: 0 };
-  data.bonus = (data.bonus || 0) + 5;
+  data.bonus = (data.bonus || 0) + 3;
   localStorage.setItem(STORAGE.aiUsage, JSON.stringify(data));
   setNum(STORAGE.aiUnlockTs, Date.now());
   return true;

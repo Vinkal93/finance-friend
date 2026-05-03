@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, X, Settings as SettingsIcon } from 'lucide-react';
 import { useFinance } from '@/context/FinanceContext';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export interface QuickItem {
   id: string;
@@ -36,6 +36,7 @@ function readItems(): QuickItem[] {
 export default function QuickAddFAB() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { addTransaction, currency } = useFinance();
   // Read fresh from localStorage every time menu opens (fix sync bug)
   const [items, setItems] = useState<QuickItem[]>(() => readItems());
@@ -54,6 +55,9 @@ export default function QuickAddFAB() {
       window.removeEventListener('quick-items-changed', reload);
     };
   }, []);
+
+  // Only show on home page (after hooks)
+  if (location.pathname !== '/') return null;
 
   const quickAdd = (item: QuickItem) => {
     addTransaction({

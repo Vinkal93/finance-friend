@@ -135,6 +135,19 @@
 }
 
 @layer utilities {
+  /* Hide scrollbars globally but keep scrolling */
+  * { scrollbar-width: none; -ms-overflow-style: none; }
+  *::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+  .typing-cursor::after {
+    content: '▍';
+    display: inline-block;
+    margin-left: 2px;
+    animation: blink 1s steps(2, start) infinite;
+    color: hsl(var(--primary));
+  }
+  @keyframes blink { to { visibility: hidden; } }
+
   .card-shadow {
     box-shadow: var(--shadow-card);
   }

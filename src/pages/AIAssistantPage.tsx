@@ -63,7 +63,7 @@ export default function AIAssistantPage() {
     try {
       const ok = await unlockAIWithAd();
       if (ok) {
-        toast.success('5 extra AI queries unlocked!');
+        toast.success('3 extra AI queries unlocked!');
         refreshUsage();
         setShowUnlock(false);
       } else {
@@ -318,30 +318,55 @@ export default function AIAssistantPage() {
         )}
 
         <AnimatePresence>
-          {messages.map((m, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${
-                m.role === 'user' ? 'gradient-primary text-primary-foreground' : 'bg-card card-shadow'
-              }`}>
-                {m.role === 'assistant' ? (
-                  <div className="prose prose-sm max-w-none [&>*]:my-1 [&_p]:text-sm [&_li]:text-sm [&_strong]:font-bold [&_ul]:pl-4 [&_ol]:pl-4">
-                    <ReactMarkdown>{m.content || '...'}</ReactMarkdown>
-                  </div>
-                ) : (
-                  <p>{m.content}</p>
-                )}
-              </div>
-            </motion.div>
-          ))}
+          {messages.map((m, i) => {
+            const isLast = i === messages.length - 1;
+            const isStreamingThis = loading && isLast && m.role === 'assistant';
+            return (
+              <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${
+                  m.role === 'user' ? 'gradient-primary text-primary-foreground' : 'bg-card card-shadow'
+                }`}>
+                  {m.role === 'assistant' ? (
+                    <div className={`prose prose-sm max-w-none [&>*]:my-1 [&_p]:text-sm [&_li]:text-sm [&_strong]:font-bold [&_ul]:pl-4 [&_ol]:pl-4 ${isStreamingThis ? 'typing-cursor' : ''}`}>
+                      <ReactMarkdown>{m.content || '...'}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    <p>{m.content}</p>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
         </AnimatePresence>
 
         {loading && messages[messages.length - 1]?.role === 'user' && (
           <div className="flex justify-start">
-            <div className="bg-card card-shadow rounded-2xl px-4 py-3">
+            <div className="bg-card card-shadow rounded-2xl px-4 py-3 flex items-center gap-2">
               <Loader2 className="w-4 h-4 animate-spin text-primary" />
+              <span className="text-xs text-muted-foreground">Soch raha hu...</span>
             </div>
           </div>
+        )}
+
+        {/* Follow-up suggestion chips after assistant response */}
+        {!loading && messages.length > 0 && messages[messages.length - 1]?.role === 'assistant' && usage.canQuery && (
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="pt-2">
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold mb-2">Aage puchho:</p>
+            <div className="flex flex-wrap gap-2">
+              {[
+                'Aur detail me batao',
+                'Iska example do',
+                'Main kaise save karu?',
+                'Next month ka plan do',
+              ].map(q => (
+                <button key={q} onClick={() => send(q)}
+                  className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-[11px] font-semibold border border-primary/20 active:scale-95 transition-transform">
+                  {q}
+                </button>
+              ))}
+            </div>
+          </motion.div>
         )}
       </div>
 
@@ -392,7 +417,7 @@ export default function AIAssistantPage() {
                 </div>
                 <h2 className="text-base font-bold mb-1">Daily limit reached</h2>
                 <p className="text-xs text-muted-foreground mb-4">
-                  Watch a short ad to unlock <b className="text-primary">5 more AI queries</b> today.
+                  Watch a short ad to unlock <b className="text-primary">3 more AI queries</b> today.
                 </p>
                 <button onClick={handleUnlock} disabled={unlocking}
                   className="w-full py-3 rounded-xl gradient-primary text-primary-foreground text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-60">

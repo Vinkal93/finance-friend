@@ -7,6 +7,7 @@ import { DEFAULT_QUICK_ITEMS, type QuickItem } from '@/components/QuickAddFAB';
 import { useFinance } from '@/context/FinanceContext';
 import { EMOJI_PICKER } from '@/types/finance';
 import { toast } from 'sonner';
+import ConfirmDialog from '@/components/ConfirmDialog';
 
 const CATEGORIES = ['Food', 'Travel', 'Bills', 'Shopping', 'Health', 'Entertainment', 'Education', 'Rent', 'Other'];
 
@@ -30,6 +31,7 @@ export default function QuickAddSettingsPage() {
   const [editId, setEditId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<QuickItem | null>(null);
   const [editPicker, setEditPicker] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const addItem = () => {
     if (!newLabel.trim() || !newAmount) {
@@ -50,8 +52,10 @@ export default function QuickAddSettingsPage() {
 
   const removeItem = (id: string) => {
     setItems(items.filter(i => i.id !== id));
+    setDeleteId(null);
     toast.success('Removed');
   };
+  const deleting = items.find(i => i.id === deleteId);
 
   const move = (idx: number, dir: -1 | 1) => {
     const newIdx = idx + dir;
@@ -203,7 +207,7 @@ export default function QuickAddSettingsPage() {
                     <button onClick={() => startEdit(item)} className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
                       <Pencil className="w-4 h-4 text-primary" />
                     </button>
-                    <button onClick={() => removeItem(item.id)} className="w-8 h-8 rounded-lg bg-expense/10 flex items-center justify-center">
+                    <button onClick={() => setDeleteId(item.id)} className="w-8 h-8 rounded-lg bg-expense/10 flex items-center justify-center">
                       <Trash2 className="w-4 h-4 text-expense" />
                     </button>
                   </div>
@@ -216,6 +220,15 @@ export default function QuickAddSettingsPage() {
           <p className="text-xs text-muted-foreground text-center py-8">No quick items yet</p>
         )}
       </div>
+      <ConfirmDialog
+        open={!!deleteId}
+        title="Delete Quick Item?"
+        message={deleting ? `Remove "${deleting.emoji} ${deleting.label}" from your quick add menu?` : ''}
+        confirmText="Delete"
+        destructive
+        onConfirm={() => deleteId && removeItem(deleteId)}
+        onCancel={() => setDeleteId(null)}
+      />
     </div>
   );
 }
