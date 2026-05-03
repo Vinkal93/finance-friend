@@ -1,14 +1,24 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useFinance } from '@/context/FinanceContext';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, TrendingUp, AlertTriangle, Target, Calendar, Download, FileText } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 import { downloadFile } from '@/lib/download';
+import AnomalyDrawer from '@/components/AnomalyDrawer';
+import { isMarkedNormal } from '@/lib/anomaly';
 
 export default function PredictiveAnalyticsPage() {
   const { transactions, currency, monthlyIncome, budgets } = useFinance();
   const navigate = useNavigate();
+  const [selectedAnomaly, setSelectedAnomaly] = useState<{ category: string; current: number; avg: number; ratio: number } | null>(null);
+  const [normalizedTick, setNormalizedTick] = useState(0);
+
+  useEffect(() => {
+    const handler = () => setNormalizedTick(t => t + 1);
+    window.addEventListener('anomaly-normalized', handler);
+    return () => window.removeEventListener('anomaly-normalized', handler);
+  }, []);
 
   const analytics = useMemo(() => {
     // Group expenses by month
