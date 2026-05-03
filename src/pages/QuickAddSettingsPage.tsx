@@ -31,6 +31,7 @@ export default function QuickAddSettingsPage() {
   const [editId, setEditId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<QuickItem | null>(null);
   const [editPicker, setEditPicker] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const addItem = () => {
     if (!newLabel.trim() || !newAmount) {
