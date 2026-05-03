@@ -36,9 +36,13 @@ function readItems(): QuickItem[] {
 export default function QuickAddFAB() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { addTransaction, currency } = useFinance();
   // Read fresh from localStorage every time menu opens (fix sync bug)
   const [items, setItems] = useState<QuickItem[]>(() => readItems());
+
+  // Only show on home page
+  if (location.pathname !== '/') return null;
 
   // Refresh when menu opens, when storage changes (other tab), or custom event
   useEffect(() => {
