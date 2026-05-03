@@ -10,6 +10,7 @@ import { FinanceProvider, useFinance } from "@/context/FinanceContext";
 import BottomNav from "@/components/BottomNav";
 import AppLock from "@/components/AppLock";
 import QuickAddFAB from "@/components/QuickAddFAB";
+import ScrollToTop from "@/components/ScrollToTop";
 import Dashboard from "./pages/Dashboard";
 import AddTransaction from "./pages/AddTransaction";
 import BudgetPage from "./pages/BudgetPage";
