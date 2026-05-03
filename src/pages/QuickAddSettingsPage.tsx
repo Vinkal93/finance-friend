@@ -207,7 +207,7 @@ export default function QuickAddSettingsPage() {
                     <button onClick={() => startEdit(item)} className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
                       <Pencil className="w-4 h-4 text-primary" />
                     </button>
-                    <button onClick={() => removeItem(item.id)} className="w-8 h-8 rounded-lg bg-expense/10 flex items-center justify-center">
+                    <button onClick={() => setDeleteId(item.id)} className="w-8 h-8 rounded-lg bg-expense/10 flex items-center justify-center">
                       <Trash2 className="w-4 h-4 text-expense" />
                     </button>
                   </div>
