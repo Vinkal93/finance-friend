@@ -41,9 +41,6 @@ export default function QuickAddFAB() {
   // Read fresh from localStorage every time menu opens (fix sync bug)
   const [items, setItems] = useState<QuickItem[]>(() => readItems());
 
-  // Only show on home page
-  if (location.pathname !== '/') return null;
-
   // Refresh when menu opens, when storage changes (other tab), or custom event
   useEffect(() => {
     if (open) setItems(readItems());
@@ -58,6 +55,9 @@ export default function QuickAddFAB() {
       window.removeEventListener('quick-items-changed', reload);
     };
   }, []);
+
+  // Only show on home page (after hooks)
+  if (location.pathname !== '/') return null;
 
   const quickAdd = (item: QuickItem) => {
     addTransaction({
