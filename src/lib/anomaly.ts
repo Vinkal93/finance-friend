@@ -52,6 +52,7 @@ export function detectAnomaly(
   history: Transaction[]
 ): AnomalyResult {
   if (newTx.type !== 'expense') return { isAnomaly: false };
+  if (isMarkedNormal(newTx.category)) return { isAnomaly: false };
 
   const sameCat = history.filter(t => t.type === 'expense' && t.category === newTx.category);
   if (sameCat.length < 3) {
