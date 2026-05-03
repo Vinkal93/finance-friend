@@ -2,7 +2,7 @@ import { useFinance } from '@/context/FinanceContext';
 import { CURRENCY_OPTIONS } from '@/types/finance';
 import { ThemeMode, AccentColor, FontSize } from '@/context/FinanceContext';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Download, User, DollarSign, Palette, RotateCcw, Lock, Type, Paintbrush, Phone, Zap } from 'lucide-react';
+import { ArrowLeft, Download, User, DollarSign, Palette, RotateCcw, Lock, Type, Paintbrush, Phone, Zap, Sparkles, Package, CalendarDays, Info, ShieldCheck, FileText, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { toast } from 'sonner';
