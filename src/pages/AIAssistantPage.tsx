@@ -41,11 +41,38 @@ export default function AIAssistantPage() {
 
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [usage, setUsage] = useState<AIUsageInfo>(() => getAIUsage());
+  const [showUnlock, setShowUnlock] = useState(false);
+  const [unlocking, setUnlocking] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const refreshUsage = () => setUsage(getAIUsage());
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
+
+  useEffect(() => {
+    refreshUsage();
+    const t = setInterval(refreshUsage, 30000);
+    return () => clearInterval(t);
+  }, []);
+
+  const handleUnlock = async () => {
+    setUnlocking(true);
+    try {
+      const ok = await unlockAIWithAd();
+      if (ok) {
+        toast.success('5 extra AI queries unlocked!');
+        refreshUsage();
+        setShowUnlock(false);
+      } else {
+        toast.error('Ad could not be loaded — try again later');
+      }
+    } finally {
+      setUnlocking(false);
+    }
+  };
 
   const ensureActive = (): Conversation => {
     if (active) return active;
