@@ -220,6 +220,15 @@ export default function QuickAddSettingsPage() {
           <p className="text-xs text-muted-foreground text-center py-8">No quick items yet</p>
         )}
       </div>
+      <ConfirmDialog
+        open={!!deleteId}
+        title="Delete Quick Item?"
+        message={deleting ? `Remove "${deleting.emoji} ${deleting.label}" from your quick add menu?` : ''}
+        confirmText="Delete"
+        destructive
+        onConfirm={() => deleteId && removeItem(deleteId)}
+        onCancel={() => setDeleteId(null)}
+      />
     </div>
   );
 }
