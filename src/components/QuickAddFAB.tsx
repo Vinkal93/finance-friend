@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, X, Settings as SettingsIcon } from 'lucide-react';
 import { useFinance } from '@/context/FinanceContext';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export interface QuickItem {
   id: string;
