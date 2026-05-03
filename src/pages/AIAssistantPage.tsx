@@ -392,7 +392,7 @@ export default function AIAssistantPage() {
                 </div>
                 <h2 className="text-base font-bold mb-1">Daily limit reached</h2>
                 <p className="text-xs text-muted-foreground mb-4">
-                  Watch a short ad to unlock <b className="text-primary">5 more AI queries</b> today.
+                  Watch a short ad to unlock <b className="text-primary">3 more AI queries</b> today.
                 </p>
                 <button onClick={handleUnlock} disabled={unlocking}
                   className="w-full py-3 rounded-xl gradient-primary text-primary-foreground text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-60">
