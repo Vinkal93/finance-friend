@@ -1,14 +1,24 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useFinance } from '@/context/FinanceContext';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, TrendingUp, AlertTriangle, Target, Calendar, Download, FileText } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 import { downloadFile } from '@/lib/download';
+import AnomalyDrawer from '@/components/AnomalyDrawer';
+import { isMarkedNormal } from '@/lib/anomaly';
 
 export default function PredictiveAnalyticsPage() {
   const { transactions, currency, monthlyIncome, budgets } = useFinance();
   const navigate = useNavigate();
+  const [selectedAnomaly, setSelectedAnomaly] = useState<{ category: string; current: number; avg: number; ratio: number } | null>(null);
+  const [normalizedTick, setNormalizedTick] = useState(0);
+
+  useEffect(() => {
+    const handler = () => setNormalizedTick(t => t + 1);
+    window.addEventListener('anomaly-normalized', handler);
+    return () => window.removeEventListener('anomaly-normalized', handler);
+  }, []);
 
   const analytics = useMemo(() => {
     // Group expenses by month
@@ -53,6 +63,7 @@ export default function PredictiveAnalyticsPage() {
     });
     const anomalies: { category: string; current: number; avg: number; ratio: number }[] = [];
     Object.entries(currentByCat).forEach(([cat, current]) => {
+      if (isMarkedNormal(cat, currentMonth)) return;
       const hist = histByCat[cat] || [];
       const avg = hist.length > 0 ? hist.reduce((a, b) => a + b, 0) / Math.max(sortedMonths.length - 1, 1) : 0;
       if (avg > 0 && current > avg * 1.5) {
@@ -83,7 +94,7 @@ export default function PredictiveAnalyticsPage() {
     chartData.push({ month: 'Next', expense: Math.round(nextMonthPredicted) });
 
     return { avgMonthly, nextMonthPredicted, projection, anomalies, budgetForecasts, chartData, monthlySaving };
-  }, [transactions, monthlyIncome, budgets]);
+  }, [transactions, monthlyIncome, budgets, normalizedTick]);
 
   const exportCSV = () => {
     const lines: string[] = [];
@@ -260,12 +271,16 @@ ${analytics.anomalies.length > 0 ? `<h2>⚠️ Unusual Spending Alerts</h2>
           </div>
           <div className="space-y-2">
             {analytics.anomalies.map(a => (
-              <div key={a.category} className="bg-card rounded-lg p-3 text-xs">
-                <p className="font-bold mb-1">{a.category} <span className="text-expense">({Math.round(a.ratio * 100)}% of normal)</span></p>
+              <button key={a.category} onClick={() => setSelectedAnomaly(a)}
+                className="w-full text-left bg-card rounded-lg p-3 text-xs active:scale-[0.98] transition-transform hover:bg-secondary">
+                <p className="font-bold mb-1 flex items-center justify-between">
+                  <span>{a.category} <span className="text-expense">({Math.round(a.ratio * 100)}% of normal)</span></span>
+                  <span className="text-primary text-[10px] font-semibold">View ›</span>
+                </p>
                 <p className="text-muted-foreground">
                   This month: <b>{currency}{Math.round(a.current).toLocaleString()}</b> vs avg {currency}{Math.round(a.avg).toLocaleString()}
                 </p>
-              </div>
+              </button>
             ))}
           </div>
         </motion.div>
@@ -277,6 +292,12 @@ ${analytics.anomalies.length > 0 ? `<h2>⚠️ Unusual Spending Alerts</h2>
           <p className="text-xs text-muted-foreground">Add transactions across multiple months to unlock predictive insights</p>
         </div>
       )}
+
+      <AnomalyDrawer
+        open={!!selectedAnomaly}
+        anomaly={selectedAnomaly}
+        onClose={() => setSelectedAnomaly(null)}
+      />
     </div>
   );
 }

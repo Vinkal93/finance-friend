@@ -2,10 +2,11 @@ import { useState, useRef, useEffect } from 'react';
 import { useFinance } from '@/context/FinanceContext';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Send, Sparkles, Loader2, History, Plus, Trash2, X } from 'lucide-react';
+import { ArrowLeft, Send, Sparkles, Loader2, History, Plus, Trash2, X, Lock, Play } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { toast } from 'sonner';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { getAIUsage, consumeAIQuery, unlockAIWithAd, type AIUsageInfo } from '@/lib/ads';
 
 interface Msg {
   role: 'user' | 'assistant';
@@ -40,11 +41,38 @@ export default function AIAssistantPage() {
 
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [usage, setUsage] = useState<AIUsageInfo>(() => getAIUsage());
+  const [showUnlock, setShowUnlock] = useState(false);
+  const [unlocking, setUnlocking] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const refreshUsage = () => setUsage(getAIUsage());
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
+
+  useEffect(() => {
+    refreshUsage();
+    const t = setInterval(refreshUsage, 30000);
+    return () => clearInterval(t);
+  }, []);
+
+  const handleUnlock = async () => {
+    setUnlocking(true);
+    try {
+      const ok = await unlockAIWithAd();
+      if (ok) {
+        toast.success('5 extra AI queries unlocked!');
+        refreshUsage();
+        setShowUnlock(false);
+      } else {
+        toast.error('Ad could not be loaded — try again later');
+      }
+    } finally {
+      setUnlocking(false);
+    }
+  };
 
   const ensureActive = (): Conversation => {
     if (active) return active;
@@ -111,6 +139,13 @@ export default function AIAssistantPage() {
 
   const send = async (text: string) => {
     if (!text.trim() || loading) return;
+    const u = getAIUsage();
+    if (!u.canQuery) {
+      setShowUnlock(true);
+      return;
+    }
+    consumeAIQuery();
+    refreshUsage();
     const conv = ensureActive();
     const userMsg: Msg = { role: 'user', content: text };
     const newMessages = [...conv.messages, userMsg];
@@ -312,21 +347,67 @@ export default function AIAssistantPage() {
 
       {/* Input */}
       <div className="fixed bottom-0 left-0 right-0 max-w-lg mx-auto bg-background border-t border-border p-3 safe-bottom z-40">
+        {/* Usage bar */}
+        <div className="flex items-center justify-between mb-2 px-1">
+          <p className="text-[10px] text-muted-foreground">
+            {usage.used}/{usage.freeLimit + usage.bonus} queries today
+            {usage.bonus > 0 && <span className="text-primary"> • +{usage.bonus} bonus</span>}
+          </p>
+          {!usage.canQuery && (
+            <button onClick={() => setShowUnlock(true)}
+              className="text-[10px] font-bold text-primary inline-flex items-center gap-1">
+              <Play className="w-3 h-3" /> Unlock 5 more
+            </button>
+          )}
+        </div>
         <div className="flex gap-2 items-end">
           <input
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && send(input)}
-            placeholder="Ask anything..."
-            disabled={loading}
+            placeholder={usage.canQuery ? 'Ask anything...' : 'Daily limit reached — watch ad to unlock'}
+            disabled={loading || !usage.canQuery}
             className="flex-1 bg-card border border-border rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
           />
-          <button onClick={() => send(input)} disabled={loading || !input.trim()}
+          <button onClick={() => usage.canQuery ? send(input) : setShowUnlock(true)} disabled={loading || (usage.canQuery && !input.trim())}
             className="w-11 h-11 rounded-xl gradient-primary flex items-center justify-center disabled:opacity-50 active:scale-95 transition-transform">
-            {loading ? <Loader2 className="w-5 h-5 text-primary-foreground animate-spin" /> : <Send className="w-5 h-5 text-primary-foreground" />}
+            {loading ? <Loader2 className="w-5 h-5 text-primary-foreground animate-spin" /> :
+              !usage.canQuery ? <Lock className="w-5 h-5 text-primary-foreground" /> :
+              <Send className="w-5 h-5 text-primary-foreground" />}
           </button>
         </div>
       </div>
+
+      {/* Rewarded unlock dialog */}
+      <AnimatePresence>
+        {showUnlock && (
+          <>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[60] bg-black/60" onClick={() => !unlocking && setShowUnlock(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }}
+              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] w-[90%] max-w-sm bg-card rounded-3xl p-6 card-shadow">
+              <div className="text-center">
+                <div className="w-14 h-14 mx-auto rounded-2xl gradient-primary flex items-center justify-center mb-3">
+                  <Sparkles className="w-7 h-7 text-primary-foreground" />
+                </div>
+                <h2 className="text-base font-bold mb-1">Daily limit reached</h2>
+                <p className="text-xs text-muted-foreground mb-4">
+                  Watch a short ad to unlock <b className="text-primary">5 more AI queries</b> today.
+                </p>
+                <button onClick={handleUnlock} disabled={unlocking}
+                  className="w-full py-3 rounded-xl gradient-primary text-primary-foreground text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-60">
+                  {unlocking ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+                  {unlocking ? 'Loading ad...' : 'Watch Ad & Unlock'}
+                </button>
+                <button onClick={() => setShowUnlock(false)} disabled={unlocking}
+                  className="w-full mt-2 py-2.5 text-xs text-muted-foreground font-semibold">
+                  Maybe later
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

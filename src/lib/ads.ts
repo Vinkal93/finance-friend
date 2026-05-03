@@ -2,15 +2,55 @@
  * AdMob Manager — handles all ad logic with strict UX rules.
  * Uses @capacitor-community/admob on native platform; no-op gracefully on web.
  *
- * 🔧 REPLACE THESE WITH YOUR REAL ADMOB IDs (currently using Google test IDs):
+ * 🔧 REAL AdMob Ad Unit IDs go here. Defaults are Google's official test IDs
+ *    so the app is safe to build & run before you paste your live IDs.
+ *    Override at runtime via setRealAdIds({ ... }) — values persist in localStorage.
  */
-export const AD_UNITS = {
-  // Test IDs — replace with your real ones from AdMob console
+const TEST_IDS = {
   appOpen: 'ca-app-pub-3940256099942544/9257395921',
   interstitial: 'ca-app-pub-3940256099942544/1033173712',
   rewarded: 'ca-app-pub-3940256099942544/5224354917',
   banner: 'ca-app-pub-3940256099942544/6300978111',
 };
+
+// 👉 PASTE YOUR REAL ADMOB IDs HERE (or call setRealAdIds at runtime).
+// Leaving any field empty falls back to the Google test ID for that slot.
+const LIVE_IDS: Partial<typeof TEST_IDS> = {
+  appOpen: '',
+  interstitial: '',
+  rewarded: '',
+  banner: '',
+};
+
+function loadOverrides(): Partial<typeof TEST_IDS> {
+  try { return JSON.parse(localStorage.getItem('ads-unit-overrides') || '{}'); }
+  catch { return {}; }
+}
+
+function resolveUnits(): typeof TEST_IDS {
+  const ov = loadOverrides();
+  const pick = (k: keyof typeof TEST_IDS) =>
+    (ov[k] && ov[k]!.trim()) || (LIVE_IDS[k] && LIVE_IDS[k]!.trim()) || TEST_IDS[k];
+  return {
+    appOpen: pick('appOpen'),
+    interstitial: pick('interstitial'),
+    rewarded: pick('rewarded'),
+    banner: pick('banner'),
+  };
+}
+
+export const AD_UNITS = resolveUnits();
+
+export function setRealAdIds(ids: Partial<typeof TEST_IDS>) {
+  const cur = loadOverrides();
+  localStorage.setItem('ads-unit-overrides', JSON.stringify({ ...cur, ...ids }));
+  Object.assign(AD_UNITS, resolveUnits());
+}
+
+export function getActiveAdIds() { return { ...AD_UNITS }; }
+export function isUsingTestIds() {
+  return AD_UNITS.interstitial === TEST_IDS.interstitial;
+}
 
 import { Capacitor } from '@capacitor/core';
 
