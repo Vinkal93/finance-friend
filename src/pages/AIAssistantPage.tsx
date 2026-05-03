@@ -63,7 +63,7 @@ export default function AIAssistantPage() {
     try {
       const ok = await unlockAIWithAd();
       if (ok) {
-        toast.success('5 extra AI queries unlocked!');
+        toast.success('3 extra AI queries unlocked!');
         refreshUsage();
         setShowUnlock(false);
       } else {
